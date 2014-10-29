@@ -11,3 +11,4 @@ To use the POSConnector in your own project, include the script file in your hea
 
 ##API
 
+> POSConnector
