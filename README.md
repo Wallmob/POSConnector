@@ -11,7 +11,7 @@ To use the POSConnector in your own project, include the script file in your hea
 
 ##API & Examples
 
-###Check if the POS is present
+#####Check if the POS is present
 ```javascript
 POSConnector.isConnected();
 ````
@@ -20,7 +20,7 @@ POSConnector.isConnected();
 var connected = POSConnector.isConnected(); // connected = true or false
 ````
 
-###Send Order to the POS
+#####Send Order to the POS
 ```javascript
 POSConnector.payBasket(Order, CallbackFn);
 ````
@@ -71,7 +71,7 @@ POSConnector.payBasket(Order, function(errors){
 });
 ````
 
-###Listen for paymentStatus events sent from the POS
+#####Listen for paymentStatus events sent from the POS
 ```javascript
 POSConnector.subscribeForPaymentStatus(CallbackFn);
 ````
@@ -82,7 +82,7 @@ POSConnector.subscribeForPaymentStatus(function(status){
 });
 ````
 
-###Listen for barcodeScan events sent from the POS
+#####Listen for barcodeScan events sent from the POS
 ```javascript
 POSConnector.subscribeForBarcodeScan(CallbackFn);
 ````
