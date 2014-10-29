@@ -25,6 +25,7 @@ POSConnector.payBasket(Order, CallbackFn);
 ````
 ```javascript
 // Example
+// JSON-style double quotes around attribute names are optional in JavaScript objects
 var Order = {
    "id":"OneScreenOrderId",
    "order_line_items":[
