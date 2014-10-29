@@ -9,6 +9,25 @@ To use the POSConnector in your own project, include the script file in your hea
 <script src="POSConnector.min.js"></script>
 ```
 
-##API
+##API & Examples
 
-> POSConnector
+Check if POS is present
+````
+POSConnector.isConnected();
+````
+
+Check if POS is present
+````
+POSConnector.payBasket(Order, Callback);
+````
+
+Check if POS is present
+````
+POSConnector.subscribeForPaymentStatus(Callback);
+````
+
+Check if POS is present
+````
+POSConnector.subscribeForBarcodeScan(Callback);
+````
+
