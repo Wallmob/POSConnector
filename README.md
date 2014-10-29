@@ -1,14 +1,13 @@
 #POSConnector
-
 JS Library for communication with the Wallmob POS
-
+<br>
 ##Setup
 
 To use the POSConnector in your own project, include the script file in your header.
 ```html
 <script src="POSConnector.min.js"></script>
 ```
-
+<br>
 ##API & Examples
 
 #####Check if the POS is present
@@ -19,7 +18,7 @@ POSConnector.isConnected();
 // Example
 var connected = POSConnector.isConnected(); // connected = true or false
 ````
-
+<br>
 #####Send Order to the POS
 ```javascript
 POSConnector.payBasket(Order, CallbackFn);
@@ -70,7 +69,7 @@ POSConnector.payBasket(Order, function(errors){
   console.log(errors); // Array of possible validation errors
 });
 ````
-
+<br>
 #####Listen for paymentStatus events sent from the POS
 ```javascript
 POSConnector.subscribeForPaymentStatus(CallbackFn);
@@ -81,7 +80,7 @@ POSConnector.subscribeForPaymentStatus(function(status){
   console.log("Payment Status received from POS: ", status);
 });
 ````
-
+<br>
 #####Listen for barcodeScan events sent from the POS
 ```javascript
 POSConnector.subscribeForBarcodeScan(CallbackFn);
