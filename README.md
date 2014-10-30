@@ -59,7 +59,7 @@ var Order = {
    ],
    "discounts":[
       {
-         "amount":100.00,
+         "amount":null,
          "percentage":0.25,
          "description":"Offer 25% on the basket"
       }
