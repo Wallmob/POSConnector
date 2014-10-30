@@ -4,6 +4,7 @@ JS Library for communicating with the Wallmob POS
 * [Setup](#setup)
 * [API & Examples](#api--examples)
 * [Testing in a browser-only environment](#testing-in-a-browser-only-environment)
+
 <br>
 ##Setup
 
