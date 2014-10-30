@@ -1,6 +1,10 @@
 #POSConnector
 JS Library for communicating with the Wallmob POS
 <br>
+* [Setup](#setup)
+* [API & Examples](#api--examples)
+* [Testing in a browser-only environment](#testing-in-a-browser-only-environment)
+<br>
 ##Setup
 
 To use the POSConnector in your own project, include the script file in your header.
