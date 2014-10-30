@@ -100,8 +100,8 @@ POSConnector.subscribeForBarcodeScan(function(barcode){
 POSConnector.simulatePos();
 ````
 ```javascript
-// Example
-POSConnector.simulatePos();
+// Full example
+POSConnector.simulatePos(); // Check browser console for more information after executing this method
 
 // Subscribe for status messages from POS
 POSConnector.subscribeForPaymentStatus(function(status){
