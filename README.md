@@ -102,7 +102,7 @@ POSConnector.simulatePos();
 ```javascript
 // Full example
 POSConnector.simulatePos();
-// Check browser console for more information after executing this method
+// Check browser console for more information after invoking this method
 
 // Subscribe for status messages from POS
 POSConnector.subscribeForPaymentStatus(function(status){
