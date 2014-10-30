@@ -92,4 +92,77 @@ POSConnector.subscribeForBarcodeScan(function(barcode){
   console.log("Product scanned on the POS with barcode: ", barcode);
 });
 ````
+<br>
+##Testing in a browser-only environment
 
+#####Simulate presence of the POS
+```javascript
+POSConnector.simulatePos();
+````
+```javascript
+// Example
+POSConnector.simulatePos();
+
+// Subscribe for status messages from POS
+POSConnector.subscribeForPaymentStatus(function(status){
+   console.log(status);
+});
+
+// Subscribe for barcode scans from POS
+POSConnector.subscribeForBarcodeScan(function(barcode){
+   console.log(barcode);
+});
+
+// Create dummy Order object
+var Order = {
+   "id":"OneScreenOrderId",
+   "order_line_items":[
+      {
+         "quantity":2,
+         "unit_price":110.50,
+         "product_id":"OneScreenProductId1",
+         "name":"OneScreenProductName1",
+         "vat_percentage":0.2,
+         "imei":"AA-BBBBBB-CCCCCC-D",
+         "discounts":[
+            {
+               "amount":10.25,
+               "percentage":null,
+               "description":"Manual discount"
+            }
+         ]
+      },
+      {
+         "quantity":1,
+         "unit_price":200.00,
+         "product_id":"OneScreenProductId2",
+         "name":"OneScreenProductName2",
+         "vat_percentage":0.25
+      }
+   ],
+   "discounts":[
+      {
+         "amount":100.00,
+         "percentage":0.25,
+         "description":"Offer 25% on the basket"
+      }
+   ],
+   "transactions":[
+      {
+         "type":"WM_TRANSACTION_TYPE_INSTALLMENT",
+         "amount":600.00
+      }
+   ]
+}
+
+// Send Order to the POS
+POSConnector.payBasket(Order, function(errors){
+   if(errors.length){
+      // Order was not sent due to errors
+      console.log(errors);
+   }else{
+      // Order was sent succesfully
+   }
+});
+````
+<br>

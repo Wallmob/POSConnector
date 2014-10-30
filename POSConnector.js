@@ -165,13 +165,13 @@ POSConnectorClass = (function() {
           _addError(3, 'Each OrderLineItem must contain a quantity different than 0');
         }
         if (!order_line_item.unit_price || !_isNumber(order_line_item.unit_price)) {
-          _addError(4, 'Each OrderLineItem must contain unit price with max 2 decimals');
+          _addError(4, 'Each OrderLineItem must contain unit price with a maximum of 2 decimals');
         }
         if (!order_line_item.product_id || !(typeof order_line_item.product_id === "string" && order_line_item.product_id !== "")) {
           _addError(5, 'Each OrderLineItem must contain a name');
         }
-        if (!order_line_item.vat_percentage || !(order_line_item.vat_percentage >= 0 && order_line_item.vat_percentage <= 1)) {
-          _addError(6, 'Each OrderLineItem must contain a vat rate from 0 to 1');
+        if (!order_line_item.vat_percentage || !(_isNumber(order_line_item.vat_percentage) && order_line_item.vat_percentage >= 0 && order_line_item.vat_percentage <= 1)) {
+          _addError(6, 'Each OrderLineItem must contain a vat rate from 0 to 1 with a maximum of 2 decimals');
         }
         if (order_line_item.imei && !(typeof order_line_item.imei === "string" && order_line_item.imei !== "")) {
           _addError(7, 'If imei is present on OrderLineItem, it must of type string and non empty');
@@ -180,14 +180,17 @@ POSConnectorClass = (function() {
           _ref1 = order_line_item.discounts;
           for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
             discount = _ref1[_j];
-            if (!discount.amount || !_isNumber(discount.amount)) {
-              _addError(8, 'Each discount must contain amount with max 2 decimals');
+            if (discount.amount && discount.percentage) {
+              _addError(8, 'Both amount and percentage cannot be present on Discounts at the same time');
+            }
+            if (discount.amount && !_isNumber(discount.amount)) {
+              _addError(9, 'If amount is present on discount, it must be a number with a maximum of 2 decimals');
             }
             if (discount.percentage && !(discount.percentage >= 0 && discount.percentage <= 1)) {
-              _addError(9, 'If percentage is present on Discount, it must be from 0 to 1');
+              _addError(10, 'If percentage is present on Discount, it must be from 0 to 1');
             }
             if (discount.description && !(typeof discount.description === "string" && discount.description !== "")) {
-              _addError(10, 'If description is present on Discount, it must be a non empty string');
+              _addError(11, 'If description is present on Discount, it must be a non empty string');
             }
           }
         }
@@ -197,14 +200,17 @@ POSConnectorClass = (function() {
       _ref2 = order.discounts;
       for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
         discount = _ref2[_k];
-        if (!discount.amount || !_isNumber(discount.amount)) {
-          _addError(8, 'Each discount must contain amount with max 2 decimals');
+        if (discount.amount && discount.percentage) {
+          _addError(12, 'Both amount and percentage cannot be present on Discounts at the same time');
+        }
+        if (discount.amount && !_isNumber(discount.amount)) {
+          _addError(13, 'If amount is present on discount, it must be a number with a maximum of 2 decimals');
         }
         if (discount.percentage && !(discount.percentage >= 0 && discount.percentage <= 1)) {
-          _addError(9, 'If percentage is present on Discount, it must be from 0 to 1');
+          _addError(14, 'If percentage is present on Discount, it must be from 0 to 1');
         }
         if (discount.description && !(typeof discount.description === "string" && discount.description !== "")) {
-          _addError(10, 'If description is present on Discount, it must be a non empty string');
+          _addError(15, 'If description is present on Discount, it must be a non empty string');
         }
       }
     }
@@ -213,10 +219,10 @@ POSConnectorClass = (function() {
       for (_l = 0, _len3 = _ref3.length; _l < _len3; _l++) {
         transaction = _ref3[_l];
         if (!transaction.type || transaction.type !== "WM_TRANSACTION_TYPE_INSTALLMENT") {
-          _addError(11, 'Each transaction must contain type matching "WM_TRANSACTION_TYPE_INSTALLMENT"');
+          _addError(16, 'Each transaction must contain type matching "WM_TRANSACTION_TYPE_INSTALLMENT"');
         }
         if (!transaction.amount || !_isNumber(transaction.amount)) {
-          _addError(12, 'Each transaction must contain amount with max 2 decimals');
+          _addError(17, 'Each transaction must contain amount with max 2 decimals');
         }
       }
     }
@@ -248,6 +254,10 @@ POSConnectorClass = (function() {
     };
     init = function(messageHandler) {
       var i, receivedMessages, _results;
+      console.info("[POS Simulator]: Started running...");
+      console.info("[POS Simulator]: Will echo Orders received from the payBasket() method, and send back Payment Status after 10 seconds of receiving and Order.");
+      console.info("[POS Simulator]: Will also simulate Barcode Scans every 30 seconds.");
+      console.info("[POS Simulator]: Remember to subscribe for Barcodes and Payment Status's with the methods provided.");
       if (WebViewJavascriptBridge._messageHandler) {
         throw new Error("WebViewJavascriptBridge.init called twice");
       }
@@ -255,6 +265,13 @@ POSConnectorClass = (function() {
       receivedMessages = receiveMessageQueue;
       receiveMessageQueue = null;
       i = 0;
+      setInterval(function() {
+        if (messageHandlers['barcodeScan']) {
+          return messageHandlers['barcodeScan']({
+            barcode: '1234567890123'
+          });
+        }
+      }, 30000);
       _results = [];
       while (i < receivedMessages.length) {
         _dispatchMessageFromObjC(receivedMessages[i]);
@@ -286,8 +303,8 @@ POSConnectorClass = (function() {
       sendMessageQueue.push(message);
       messagingIframe.src = CUSTOM_PROTOCOL_SCHEME + "://" + QUEUE_HAS_MESSAGE;
       if (message.handlerName) {
-        console.log('[POS]: Received handler(' + message.handlerName + ')', message.data);
-        console.log('POS invoking paymentStatus event in 10 seconds.');
+        console.log('[POS Simulator]: Received handler(' + message.handlerName + ') with data: ', message.data);
+        console.log('[POS Simulator]: Invoking paymentStatus event in 10 seconds.');
         if (messageHandlers['paymentStatus']) {
           return setTimeout(function() {
             return messageHandlers['paymentStatus']({
@@ -297,7 +314,7 @@ POSConnectorClass = (function() {
           }, 10000);
         }
       } else {
-        return console.log("[POS]: Received message: ", message.data);
+        return console.log("[POS Simulator]: Received message: ", message.data);
       }
     };
     _fetchQueue = function() {
@@ -366,7 +383,7 @@ POSConnectorClass = (function() {
     doc = document;
     _createQueueReadyIframe(doc);
     readyEvent = doc.createEvent("Events");
-    readyEvent.initEvent("WebViewJavascriptBridgeReady");
+    readyEvent.initEvent("WebViewJavascriptBridgeReady", true, false);
     readyEvent.bridge = WebViewJavascriptBridge;
     return doc.dispatchEvent(readyEvent);
   };
