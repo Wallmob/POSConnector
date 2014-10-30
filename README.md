@@ -103,7 +103,8 @@ POSConnector.subscribeForBarcodeScan(function(barcode){
 #####Simulate presence of the POS
 ```javascript
 POSConnector.simulatePos();
-/* After starting the simulator, the barcodeScan events will
+/* 
+   After starting the simulator, the barcodeScan events will
    be triggered every 30 seconds with a fixed barcode for testing.
    When sending an Order with the payBasket() method, the paymentStatus
    event will be triggered 10 seconds afterwards.
