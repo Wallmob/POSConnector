@@ -1,5 +1,5 @@
 #POSConnector
-JS Library for communication with the Wallmob POS
+JS Library for communicating with the Wallmob POS
 <br>
 ##Setup
 
@@ -98,6 +98,12 @@ POSConnector.subscribeForBarcodeScan(function(barcode){
 #####Simulate presence of the POS
 ```javascript
 POSConnector.simulatePos();
+/* After starting the simulator, the barcodeScan events will
+   be triggered every 30 seconds with a fixed barcode for testing.
+   When sending an Order with the payBasket() method, the paymentStatus
+   event will be triggered 10 seconds afterwards.
+   Remember to subscribe for the Barcode and Payment Status events.
+*/
 ````
 ```javascript
 // Full example
