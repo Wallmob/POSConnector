@@ -69,6 +69,23 @@ POSConnectorClass = (function() {
 
 
   /**
+  	 * Event inoked on POS connect
+  	 * @param  {Function} callback
+  	 * @return {}
+   */
+
+  POSConnectorClass.prototype.onConnect = function(callback) {
+    if (window.WebViewJavascriptBridge) {
+      return callback();
+    } else {
+      return document.addEventListener("WebViewJavascriptBridgeReady", function() {
+        return callback();
+      });
+    }
+  };
+
+
+  /**
   	 * Connects to POS and invokes a callback function with the bridge object
   	 * @param  {Function} callback
   	 * @return {}

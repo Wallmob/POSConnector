@@ -48,6 +48,18 @@ class POSConnectorClass
 		@_registerHandler 'barcodeScan', callback
 
 	###*
+	 * Event inoked on POS connect
+	 * @param  {Function} callback
+	 * @return {}
+	###
+	onConnect: (callback) ->
+		if window.WebViewJavascriptBridge
+			do callback
+		else
+			document.addEventListener "WebViewJavascriptBridgeReady", () ->
+				do callback
+
+	###*
 	 * Connects to POS and invokes a callback function with the bridge object
 	 * @param  {Function} callback
 	 * @return {}
