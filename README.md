@@ -135,16 +135,6 @@ POSConnector.simulatePos();
 POSConnector.simulatePos();
 // Check browser console for more information after invoking this method
 
-// Subscribe for status messages from POS
-POSConnector.subscribeForPaymentStatus(function(status){
-   console.log(status);
-});
-
-// Subscribe for barcode scans from POS
-POSConnector.subscribeForBarcodeScan(function(barcode){
-   console.log(barcode);
-});
-
 // Create dummy Order object
 var Order = {
    "id":"OneScreenOrderId",
@@ -187,14 +177,29 @@ var Order = {
    ]
 }
 
-// Send Order to the POS
-POSConnector.payBasket(Order, function(errors){
-   if(errors.length){
+// Invoked on POS connect
+POSConnector.onConnect(function(){
+
+  // Subscribe for status messages from POS
+  POSConnector.subscribeForPaymentStatus(function(status){
+    console.log(status);
+  });
+
+  // Subscribe for barcode scans from POS
+  POSConnector.subscribeForBarcodeScan(function(barcode){
+    console.log(barcode);
+  });
+  
+  // Send Order to the POS
+  POSConnector.payBasket(Order, function(errors){
+    if(errors.length){
       // Order was not sent due to errors
       console.log(errors);
-   }else{
+    }else{
       // Order was sent succesfully
-   }
+    }
+  });
+  
 });
 ````
 <br>
