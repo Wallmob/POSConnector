@@ -15,6 +15,20 @@ To use the POSConnector in your own project, include the script file in your hea
 <br>
 ##API & Examples
 
+#####Listen for connect event
+```javascript
+POSConnector.onConnect(CallbackFn);
+````
+```javascript
+// Example
+// Use this to initialize and register your event listeners
+POSConnector.onConnect(function(){
+   POSConnector.subscribeForBarcodeScan(function(barcode){
+      console.log(barcode);
+   });
+});
+````
+<br>
 #####Check if the POS is present
 ```javascript
 POSConnector.isConnected();
