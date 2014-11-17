@@ -6,8 +6,8 @@ JS Library for communicating with the Wallmob POS
   * [event onConnect](#listen-for-connect-event)
   * [method isConnected](#check-if-the-pos-is-present)
   * [method payBasket](#send-order-to-the-pos)
-  * [event subscribeForPaymentStatus event](#listen-for-paymentstatus-events-sent-from-the-pos)
-  * [event subscribeForBarcodeScan event](#listen-for-barcodescan-events-sent-from-the-pos)
+  * [event subscribeForPaymentStatus](#listen-for-paymentstatus-events-sent-from-the-pos)
+  * [event subscribeForBarcodeScan](#listen-for-barcodescan-events-sent-from-the-pos)
 * [Testing in a browser-only environment](#testing-in-a-browser-only-environment)
 
 <br>
