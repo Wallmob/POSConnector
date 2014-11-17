@@ -2,7 +2,7 @@
 JS Library for communicating with the Wallmob POS
 <br>
 * [Setup](#setup)
-* [API & Examples](#api--examples)
+* [API](#api--examples)
   * [onConnect event](#listen-for-connect-event)
   * [isConnected](#check-if-the-pos-is-present)
   * [payBasket](#send-order-to-the-pos)
