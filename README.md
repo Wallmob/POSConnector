@@ -177,7 +177,7 @@ var Order = {
    ]
 }
 
-// Invoked on POS connect
+// Listen for connect event
 POSConnector.onConnect(function(){
 
   // Subscribe for status messages from POS
