@@ -87,7 +87,7 @@ POSConnector.payBasket(Order, function(errors){
 ````
 <br>
 
-##Methods
+##Events
 
 #####Subscribe for connect event
 ```javascript
