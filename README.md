@@ -20,7 +20,7 @@ To use the POSConnector in your own project, include the script file in your hea
 <br>
 ##API & Examples
 
-#####Listen for connect event
+#####Subscribe for connect event
 ```javascript
 POSConnector.onConnect(CallbackFn);
 ````
