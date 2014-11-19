@@ -2,12 +2,15 @@
 JS Library for communicating with the Wallmob POS
 <br>
 * [Setup](#setup)
-* [API](#api--examples)
-  * [isConnected method](#check-if-the-pos-is-present)
-  * [payBasket method](#send-order-to-the-pos)
-  * [onConnect event](#subscribe-for-connect-event)
-  * [subscribeForPaymentStatus event](#listen-for-paymentstatus-events-sent-from-the-pos)
-  * [subscribeForBarcodeScan event](#listen-for-barcodescan-events-sent-from-the-pos)
+* [API](#api)
+  * [Methods](#methods)
+    * [isConnected method](#check-if-the-pos-is-present)
+    * [payBasket method](#send-order-to-the-pos)
+  * [Events](#events)
+    * [onConnect event](#subscribe-for-connect-event)
+    * [subscribeForPaymentStatus event](#subscribe-for-paymentstatus-events-sent-from-the-pos)
+    * [subscribeForBarcodeScan event](#subscribe-for-barcodescan-events-sent-from-the-pos)
+    * [subscribeForHomeButton event](#subscribe-for-gohome-events-sent-from-the-pos)
 * [Testing in a browser-only environment](#testing-in-a-browser-only-environment)
 
 <br>
@@ -18,22 +21,10 @@ To use the POSConnector in your own project, include the script file in your hea
 <script src="POSConnector.min.js"></script>
 ```
 <br>
-##API & Examples
+##API
 
-#####Subscribe for connect event
-```javascript
-POSConnector.onConnect(CallbackFn);
-````
-```javascript
-// Example
-// Use this to initialize and register your event listeners
-POSConnector.onConnect(function(){
-   POSConnector.subscribeForBarcodeScan(function(barcode){
-      console.log(barcode);
-   });
-});
-````
-<br>
+##Methods
+
 #####Check if the POS is present
 ```javascript
 POSConnector.isConnected();
@@ -95,7 +86,24 @@ POSConnector.payBasket(Order, function(errors){
 });
 ````
 <br>
-#####Listen for paymentStatus events sent from the POS
+
+##Methods
+
+#####Subscribe for connect event
+```javascript
+POSConnector.onConnect(CallbackFn);
+````
+```javascript
+// Example
+// Use this to initialize and register your event listeners
+POSConnector.onConnect(function(){
+   POSConnector.subscribeForBarcodeScan(function(barcode){
+      console.log(barcode);
+   });
+});
+````
+<br>
+#####Subscribe for paymentStatus events sent from the POS
 ```javascript
 POSConnector.subscribeForPaymentStatus(CallbackFn);
 ````
@@ -106,7 +114,7 @@ POSConnector.subscribeForPaymentStatus(function(status){
 });
 ````
 <br>
-#####Listen for barcodeScan events sent from the POS
+#####Subscribe for barcodeScan events sent from the POS
 ```javascript
 POSConnector.subscribeForBarcodeScan(CallbackFn);
 ````
@@ -114,6 +122,17 @@ POSConnector.subscribeForBarcodeScan(CallbackFn);
 // Example
 POSConnector.subscribeForBarcodeScan(function(barcode){
   console.log("Product scanned on the POS with barcode: ", barcode);
+});
+````
+<br>
+#####Subscribe for goHome events sent from the POS
+```javascript
+POSConnector.subscribeForHomeButton(CallbackFn);
+````
+```javascript
+// Example
+POSConnector.subscribeForHomeButton(function(barcode){
+  console.log("Home button clicked in the POS");
 });
 ````
 <br>

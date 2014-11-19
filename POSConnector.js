@@ -69,7 +69,18 @@ POSConnectorClass = (function() {
 
 
   /**
-  	 * Event inoked on POS connect
+  	 * Subscribes for home button click
+  	 * @param  {Function} callback
+  	 * @return {}
+   */
+
+  POSConnectorClass.prototype.subscribeForHomeButton = function(callback) {
+    return this._registerHandler('goHome', callback);
+  };
+
+
+  /**
+  	 * Event invoked on POS connect
   	 * @param  {Function} callback
   	 * @return {}
    */

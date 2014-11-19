@@ -48,7 +48,15 @@ class POSConnectorClass
 		@_registerHandler 'barcodeScan', callback
 
 	###*
-	 * Event inoked on POS connect
+	 * Subscribes for home button click
+	 * @param  {Function} callback
+	 * @return {}
+	###
+	subscribeForHomeButton: (callback) ->
+		@_registerHandler 'goHome', callback
+
+	###*
+	 * Event invoked on POS connect
 	 * @param  {Function} callback
 	 * @return {}
 	###
