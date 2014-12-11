@@ -131,7 +131,7 @@ POSConnector.subscribeForHomeButton(CallbackFn);
 ````
 ```javascript
 // Example
-POSConnector.subscribeForHomeButton(function(barcode){
+POSConnector.subscribeForHomeButton(function(){
   console.log("Home button clicked in the POS");
 });
 ````
