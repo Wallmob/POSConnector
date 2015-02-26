@@ -159,7 +159,7 @@ POSConnectorClass = (function() {
    */
 
   POSConnectorClass.prototype._validateOrder = function(order) {
-    var discount, order_line_item, transaction, validationErrors, _addError, _countDecimals, _i, _isNumber, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3;
+    var discount, order_line_item, transaction, validationErrors, _addError, _countDecimals, _i, _isNumber, _j, _k, _l, _len, _len1, _len2, _len3, _orderHasReturns, _ref, _ref1, _ref2, _ref3;
     validationErrors = [];
     _countDecimals = function(number) {
       var match;
@@ -174,10 +174,12 @@ POSConnectorClass = (function() {
       return typeof number === "number" && _countDecimals(number) <= 2;
     };
     _addError = function(errorCode, message) {
-      return validationErrors.push({
+      var _orderHasReturns;
+      validationErrors.push({
         errorCode: errorCode,
         message: message
       });
+      return _orderHasReturns = false;
     };
     if (!order.id) {
       _addError(1, 'Order ID must be present');
@@ -189,6 +191,9 @@ POSConnectorClass = (function() {
       _ref = order.order_line_items;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         order_line_item = _ref[_i];
+        if (order_line_item.quantity && order_line_item.quantity < 0) {
+          _orderHasReturns = true;
+        }
         if (!order_line_item.quantity || order_line_item.quantity === 0) {
           _addError(3, 'Each OrderLineItem must contain a quantity different than 0');
         }
@@ -204,21 +209,24 @@ POSConnectorClass = (function() {
         if (order_line_item.imei && !(typeof order_line_item.imei === "string" && order_line_item.imei !== "")) {
           _addError(7, 'If imei is present on OrderLineItem, it must of type string and non empty');
         }
+        if (order_line_item.unit_price && order_line_item.unit_price < 0) {
+          _addError(8, 'If UnitPrice is present on OrderLineItem, it cannot be negative');
+        }
         if (order_line_item.discounts) {
           _ref1 = order_line_item.discounts;
           for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
             discount = _ref1[_j];
             if (discount.amount && discount.percentage) {
-              _addError(8, 'Both amount and percentage cannot be present on Discounts at the same time');
+              _addError(9, 'Both amount and percentage cannot be present on Discounts at the same time');
             }
             if (discount.amount && !_isNumber(discount.amount)) {
-              _addError(9, 'If amount is present on discount, it must be a number with a maximum of 2 decimals');
+              _addError(10, 'If amount is present on discount, it must be a number with a maximum of 2 decimals');
             }
             if (discount.percentage && !(discount.percentage >= 0 && discount.percentage <= 1)) {
-              _addError(10, 'If percentage is present on Discount, it must be from 0 to 1');
+              _addError(11, 'If percentage is present on Discount, it must be from 0 to 1');
             }
             if (discount.description && !(typeof discount.description === "string" && discount.description !== "")) {
-              _addError(11, 'If description is present on Discount, it must be a non empty string');
+              _addError(12, 'If description is present on Discount, it must be a non empty string');
             }
           }
         }
@@ -229,16 +237,16 @@ POSConnectorClass = (function() {
       for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
         discount = _ref2[_k];
         if (discount.amount && discount.percentage) {
-          _addError(12, 'Both amount and percentage cannot be present on Discounts at the same time');
+          _addError(13, 'Both amount and percentage cannot be present on Discounts at the same time');
         }
         if (discount.amount && !_isNumber(discount.amount)) {
-          _addError(13, 'If amount is present on discount, it must be a number with a maximum of 2 decimals');
+          _addError(14, 'If amount is present on discount, it must be a number with a maximum of 2 decimals');
         }
         if (discount.percentage && !(discount.percentage >= 0 && discount.percentage <= 1)) {
-          _addError(14, 'If percentage is present on Discount, it must be from 0 to 1');
+          _addError(15, 'If percentage is present on Discount, it must be from 0 to 1');
         }
         if (discount.description && !(typeof discount.description === "string" && discount.description !== "")) {
-          _addError(15, 'If description is present on Discount, it must be a non empty string');
+          _addError(16, 'If description is present on Discount, it must be a non empty string');
         }
       }
     }
@@ -247,12 +255,15 @@ POSConnectorClass = (function() {
       for (_l = 0, _len3 = _ref3.length; _l < _len3; _l++) {
         transaction = _ref3[_l];
         if (!transaction.type || transaction.type !== "WM_TRANSACTION_TYPE_INSTALLMENT") {
-          _addError(16, 'Each transaction must contain type matching "WM_TRANSACTION_TYPE_INSTALLMENT"');
+          _addError(17, 'Each transaction must contain type matching "WM_TRANSACTION_TYPE_INSTALLMENT"');
         }
         if (!transaction.amount || !_isNumber(transaction.amount)) {
-          _addError(17, 'Each transaction must contain amount with max 2 decimals');
+          _addError(18, 'Each transaction must contain amount with max 2 decimals');
         }
       }
+    }
+    if (order.transactions && order.transactions.length && _orderHasReturns) {
+      _addError(19, 'If order has returns, transactions cannot exist on the order');
     }
     return validationErrors;
   };

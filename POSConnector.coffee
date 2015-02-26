@@ -12,7 +12,7 @@ class POSConnectorClass
 		@_connectWebViewJavascriptBridge (bridge) ->
 			_this._bridge = bridge;
 			_this._bridge.init (message, responseCallback) ->
-	
+
 	###*
 	 * Checks if connection to POS is established
 	 * @return {Boolean}
@@ -118,7 +118,7 @@ class POSConnectorClass
 		validationErrors = []
 		_countDecimals = (number) ->
 			match = (''+number).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/)
-			if (!match) 
+			if (!match)
 				return 0;
 			else
   				return Math.max(0, (if match[1] then match[1].length else 0) - (if match[2] then +match[2] else 0));
@@ -128,12 +128,16 @@ class POSConnectorClass
 			#if not (validationError for validationError in validationErrors when validationError.errorCode is errorCode)
 			validationErrors.push {errorCode, message}
 
+ 		_orderHasReturns = false
+
 		if !order.id
 			_addError 1, 'Order ID must be present'
 		if !order.order_line_items or order.order_line_items.length < 1
 			_addError 2, 'Order must containt at least 1 OrderLineItem'
 		if order.order_line_items
 			for order_line_item in order.order_line_items
+				if order_line_item.quantity and order_line_item.quantity < 0
+					_orderHasReturns = true
 				if !order_line_item.quantity or order_line_item.quantity == 0
 					_addError 3, 'Each OrderLineItem must contain a quantity different than 0'
 				if !order_line_item.unit_price or !_isNumber(order_line_item.unit_price)
@@ -144,34 +148,41 @@ class POSConnectorClass
 					_addError 6, 'Each OrderLineItem must contain a vat rate from 0 to 1 with a maximum of 2 decimals'
 				if order_line_item.imei and !(typeof order_line_item.imei == "string" and order_line_item.imei != "")
 					_addError 7, 'If imei is present on OrderLineItem, it must of type string and non empty'
+				if order_line_item.unit_price and order_line_item.unit_price < 0
+					_addError 8, 'If UnitPrice is present on OrderLineItem, it cannot be negative'
 				if order_line_item.discounts
 					for discount in order_line_item.discounts
 						if (discount.amount and discount.percentage)
-							_addError 8, 'Both amount and percentage cannot be present on Discounts at the same time'
+							_addError 9, 'Both amount and percentage cannot be present on Discounts at the same time'
 						if discount.amount and !_isNumber(discount.amount)
-							_addError 9, 'If amount is present on discount, it must be a number with a maximum of 2 decimals'
+							_addError 10, 'If amount is present on discount, it must be a number with a maximum of 2 decimals'
 						if discount.percentage and !(discount.percentage >= 0 and discount.percentage <= 1)
-							_addError 10, 'If percentage is present on Discount, it must be from 0 to 1'
+							_addError 11, 'If percentage is present on Discount, it must be from 0 to 1'
 						if discount.description and !(typeof discount.description == "string" and discount.description != "")
-							_addError 11, 'If description is present on Discount, it must be a non empty string'
+							_addError 12, 'If description is present on Discount, it must be a non empty string'
 
 		if order.discounts
 			for discount in order.discounts
 				if (discount.amount and discount.percentage)
-					_addError 12, 'Both amount and percentage cannot be present on Discounts at the same time'
+					_addError 13, 'Both amount and percentage cannot be present on Discounts at the same time'
 				if discount.amount and !_isNumber(discount.amount)
-					_addError 13, 'If amount is present on discount, it must be a number with a maximum of 2 decimals'
+					_addError 14, 'If amount is present on discount, it must be a number with a maximum of 2 decimals'
 				if discount.percentage and !(discount.percentage >= 0 and discount.percentage <= 1)
-					_addError 14, 'If percentage is present on Discount, it must be from 0 to 1'
+					_addError 15, 'If percentage is present on Discount, it must be from 0 to 1'
 				if discount.description and !(typeof discount.description == "string" and discount.description != "")
-					_addError 15, 'If description is present on Discount, it must be a non empty string'
+					_addError 16, 'If description is present on Discount, it must be a non empty string'
 
 		if order.transactions
 			for transaction in order.transactions
 				if !transaction.type or transaction.type != "WM_TRANSACTION_TYPE_INSTALLMENT"
-					_addError 16, 'Each transaction must contain type matching "WM_TRANSACTION_TYPE_INSTALLMENT"'
+					_addError 17, 'Each transaction must contain type matching "WM_TRANSACTION_TYPE_INSTALLMENT"'
 				if !transaction.amount or !_isNumber(transaction.amount)
-					_addError 17, 'Each transaction must contain amount with max 2 decimals'
+					_addError 18, 'Each transaction must contain amount with max 2 decimals'
+
+		if order.transactions and order.transactions.length and _orderHasReturns
+			_addError 19, 'If order has returns, transactions cannot exist on the order'
+
+
 
 		return validationErrors
 
@@ -275,7 +286,7 @@ class POSConnectorClass
 	      else
 	        _dispatchMessageFromObjC messageJSON
 	    return  if window.WebViewJavascriptBridge
-	    
+
 	    window.WebViewJavascriptBridge =
 	      init: init
 	      send: send
@@ -292,4 +303,3 @@ class POSConnectorClass
 	    doc.dispatchEvent readyEvent
 
 POSConnector = new POSConnectorClass
-	
