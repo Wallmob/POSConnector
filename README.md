@@ -131,7 +131,7 @@ POSConnector.subscribeForHomeButton(CallbackFn);
 ````
 ```javascript
 // Example
-POSConnector.subscribeForHomeButton(function(barcode){
+POSConnector.subscribeForHomeButton(function(){
   console.log("Home button clicked in the POS");
 });
 ````
@@ -183,7 +183,7 @@ var Order = {
    ],
    "discounts":[
       {
-         "amount":100.00,
+         "amount":null,
          "percentage":0.25,
          "description":"Offer 25% on the basket"
       }
