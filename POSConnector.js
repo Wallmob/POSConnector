@@ -161,6 +161,7 @@ POSConnectorClass = (function() {
   POSConnectorClass.prototype._validateOrder = function(order) {
     var discount, order_line_item, transaction, validationErrors, _addError, _countDecimals, _i, _isNumber, _j, _k, _l, _len, _len1, _len2, _len3, _orderHasReturns, _ref, _ref1, _ref2, _ref3;
     validationErrors = [];
+    _orderHasReturns = false;
     _countDecimals = function(number) {
       var match;
       match = ('' + number).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);
@@ -174,12 +175,10 @@ POSConnectorClass = (function() {
       return typeof number === "number" && _countDecimals(number) <= 2;
     };
     _addError = function(errorCode, message) {
-      var _orderHasReturns;
-      validationErrors.push({
+      return validationErrors.push({
         errorCode: errorCode,
         message: message
       });
-      return _orderHasReturns = false;
     };
     if (!order.id) {
       _addError(1, 'Order ID must be present');

@@ -116,6 +116,7 @@ class POSConnectorClass
 	###
 	_validateOrder: (order) ->
 		validationErrors = []
+		_orderHasReturns = false
 		_countDecimals = (number) ->
 			match = (''+number).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/)
 			if (!match)
@@ -127,8 +128,6 @@ class POSConnectorClass
 		_addError = (errorCode, message) ->
 			#if not (validationError for validationError in validationErrors when validationError.errorCode is errorCode)
 			validationErrors.push {errorCode, message}
-
- 		_orderHasReturns = false
 
 		if !order.id
 			_addError 1, 'Order ID must be present'
