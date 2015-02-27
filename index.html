@@ -13,7 +13,7 @@
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     </head>
     <body>
-            <textarea id="order" style="position: absolute; width: 47%; bottom: 40px; top: 10px;">
+            <textarea id="order" style="position: absolute; width: 48%; bottom: 214px; top: 10px;">
 {
    "id":"OneScreenOrderId",
    "order_line_items":[
@@ -55,10 +55,11 @@
    ]
 }
             </textarea>
+            <textarea id="errorLog" style="position: absolute; height: 160px; width: 48%; bottom: 40px;">Error log</textarea>
             <button id="sendOrder" style="position: absolute; bottom: 10px;">Send JSON Order</button>
             <button onclick="window.location = this.getAttribute('href')" href="https://www.wallmob.com/company/leadership" style="position: absolute; bottom: 10px; right: 10px;">Go to the Chieftains</button>
-            <textarea id="paymentLog" style="position: absolute; top: 10px; height: 300px; width: 47%; right: 10px;">Payment Status Event Log</textarea>
-            <textarea id="barcodeLog" style="position: absolute; top: 324px; bottom: 40px; width: 47%; right: 10px;">Barcode Scan Event Log</textarea>
+            <textarea id="paymentLog" style="position: absolute; top: 10px; height: 300px; width: 48%; right: 10px;">Payment Status Event Log</textarea>
+            <textarea id="barcodeLog" style="position: absolute; top: 324px; bottom: 40px; width: 48%; right: 10px;">Barcode Scan Event Log</textarea>
             <!-- <button onclick="alert(POSConnector.isConnected())" style="position: absolute; bottom: 10px; right: 10px;">Check POS existence</button> -->
 
         <!--[if lt IE 7]>
@@ -82,7 +83,7 @@
                 sendOrder.onclick = function(){
                     POSConnector.payBasket(JSON.parse(order.value), function(errors){
                         if (errors.length) {
-                            order.value += "\n\n" + JSON.stringify(errors);
+                            errorLog.value += "\n" + JSON.stringify(errors);
                         };
                     });
                 }
