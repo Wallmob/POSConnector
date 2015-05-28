@@ -57,7 +57,8 @@
             </textarea>
             <textarea id="errorLog" style="position: absolute; height: 160px; width: 48%; bottom: 40px;">Error log</textarea>
             <button id="sendOrder" style="position: absolute; bottom: 10px;">Send JSON Order</button>
-            <button onclick="window.location = this.getAttribute('href')" href="https://www.wallmob.com/company/leadership" style="position: absolute; bottom: 10px; right: 10px;">Go to the Chieftains</button>
+            <button id="logOut" style="position: absolute; left: 130px; bottom: 10px;">Log out</button>
+            <button onclick="window.location = this.getAttribute('href')" href="http://www.holtehus.dk/Lejekontrakt.PDF" style="position: absolute; bottom: 10px; right: 10px;">PDF</button>
             <textarea id="paymentLog" style="position: absolute; top: 10px; height: 300px; width: 48%; right: 10px;">Payment Status Event Log</textarea>
             <textarea id="barcodeLog" style="position: absolute; top: 324px; bottom: 40px; width: 48%; right: 10px;">Barcode Scan Event Log</textarea>
             <!-- <button onclick="alert(POSConnector.isConnected())" style="position: absolute; bottom: 10px; right: 10px;">Check POS existence</button> -->
@@ -80,6 +81,9 @@
                 POSConnector.subscribeForBarcodeScan(function(status){
                     barcodeLog.value += "\n" + JSON.stringify(status);
                 });
+                logOut.onclick = function() {
+                                   POSConnector.logOut();
+                                   }
                 sendOrder.onclick = function(){
                     POSConnector.payBasket(JSON.parse(order.value), function(errors){
                         if (errors.length) {
