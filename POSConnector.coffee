@@ -20,6 +20,10 @@ class POSConnectorClass
 	isConnected: () ->
 		@_bridge?
 
+	getLoginInformation : (login, callback) ->
+		@_callHandler('getLoginInformation', login) if !@_validateLoginInformation(login).length
+		callback @_validateLoginInformation(login) if callback
+
 	###*
 	 * Sends order object to POS after validating
 	 * Invokes callback function with possible errors
@@ -109,6 +113,13 @@ class POSConnectorClass
 	_callHandler: (handlerName, data) ->
 		@_bridge.callHandler handlerName, data
 
+	_validateLoginInformation : (login) -> 
+		validationErrors = []
+		if !login.shop_id
+			_addError 1, 'Shop id must be provided'
+		
+		return validationErrors
+		
 	###*
 	 * Validates Order object
 	 * @param  {Object} order
