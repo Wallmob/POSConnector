@@ -27,6 +27,15 @@ POSConnectorClass = (function() {
     return this._bridge != null;
   };
 
+  POSConnectorClass.prototype.getLoginInformation = function(login, callback) {
+    if (!this._validateLoginInformation(login).length) {
+      this._callHandler('getLoginInformation', login);
+    }
+    if (callback) {
+      return callback(this._validateLoginInformation(login));
+    }
+  };
+
 
   /**
   	 * Sends order object to POS after validating
@@ -151,6 +160,15 @@ POSConnectorClass = (function() {
     return this._bridge.callHandler(handlerName, data);
   };
 
+  POSConnectorClass.prototype._validateLoginInformation = function(login) {
+    var validationErrors;
+    validationErrors = [];
+    if (!login.shop_id) {
+      _addError(1, 'Shop id must be provided');
+    }
+    return validationErrors;
+  };
+
 
   /**
   	 * Validates Order object
@@ -159,7 +177,7 @@ POSConnectorClass = (function() {
    */
 
   POSConnectorClass.prototype._validateOrder = function(order) {
-    var discount, order_line_item, transaction, validationErrors, _addError, _countDecimals, _i, _isNumber, _j, _k, _l, _len, _len1, _len2, _len3, _orderHasReturns, _ref, _ref1, _ref2, _ref3;
+    var _addError, _countDecimals, _isNumber, _orderHasReturns, discount, j, k, l, len, len1, len2, len3, m, order_line_item, ref, ref1, ref2, ref3, transaction, validationErrors;
     validationErrors = [];
     _orderHasReturns = false;
     _countDecimals = function(number) {
@@ -187,9 +205,9 @@ POSConnectorClass = (function() {
       _addError(2, 'Order must containt at least 1 OrderLineItem');
     }
     if (order.order_line_items) {
-      _ref = order.order_line_items;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        order_line_item = _ref[_i];
+      ref = order.order_line_items;
+      for (j = 0, len = ref.length; j < len; j++) {
+        order_line_item = ref[j];
         if (order_line_item.quantity && order_line_item.quantity < 0) {
           _orderHasReturns = true;
         }
@@ -212,9 +230,9 @@ POSConnectorClass = (function() {
           _addError(8, 'If UnitPrice is present on OrderLineItem, it cannot be negative');
         }
         if (order_line_item.discounts) {
-          _ref1 = order_line_item.discounts;
-          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-            discount = _ref1[_j];
+          ref1 = order_line_item.discounts;
+          for (k = 0, len1 = ref1.length; k < len1; k++) {
+            discount = ref1[k];
             if (discount.amount && discount.percentage) {
               _addError(9, 'Both amount and percentage cannot be present on Discounts at the same time');
             }
@@ -232,9 +250,9 @@ POSConnectorClass = (function() {
       }
     }
     if (order.discounts) {
-      _ref2 = order.discounts;
-      for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
-        discount = _ref2[_k];
+      ref2 = order.discounts;
+      for (l = 0, len2 = ref2.length; l < len2; l++) {
+        discount = ref2[l];
         if (discount.amount && discount.percentage) {
           _addError(13, 'Both amount and percentage cannot be present on Discounts at the same time');
         }
@@ -250,9 +268,9 @@ POSConnectorClass = (function() {
       }
     }
     if (order.transactions) {
-      _ref3 = order.transactions;
-      for (_l = 0, _len3 = _ref3.length; _l < _len3; _l++) {
-        transaction = _ref3[_l];
+      ref3 = order.transactions;
+      for (m = 0, len3 = ref3.length; m < len3; m++) {
+        transaction = ref3[m];
         if (!transaction.type || transaction.type !== "WM_TRANSACTION_TYPE_INSTALLMENT") {
           _addError(17, 'Each transaction must contain type matching "WM_TRANSACTION_TYPE_INSTALLMENT"');
         }
@@ -275,7 +293,7 @@ POSConnectorClass = (function() {
    */
 
   POSConnectorClass.prototype.simulatePos = function() {
-    var CUSTOM_PROTOCOL_SCHEME, QUEUE_HAS_MESSAGE, callHandler, doc, init, messageHandlers, messagingIframe, readyEvent, receiveMessageQueue, registerHandler, responseCallbacks, send, sendMessageQueue, uniqueId, _createQueueReadyIframe, _dispatchMessageFromObjC, _doSend, _fetchQueue, _handleMessageFromObjC;
+    var CUSTOM_PROTOCOL_SCHEME, QUEUE_HAS_MESSAGE, _createQueueReadyIframe, _dispatchMessageFromObjC, _doSend, _fetchQueue, _handleMessageFromObjC, callHandler, doc, init, messageHandlers, messagingIframe, readyEvent, receiveMessageQueue, registerHandler, responseCallbacks, send, sendMessageQueue, uniqueId;
     messagingIframe = void 0;
     sendMessageQueue = [];
     receiveMessageQueue = [];
@@ -291,7 +309,7 @@ POSConnectorClass = (function() {
       return doc.documentElement.appendChild(messagingIframe);
     };
     init = function(messageHandler) {
-      var i, receivedMessages, _results;
+      var i, receivedMessages, results;
       console.info("[POS Simulator]: Started running...");
       console.info("[POS Simulator]: Will echo Orders received from the payBasket() method, and send back Payment Status after 10 seconds of receiving and Order.");
       console.info("[POS Simulator]: Will also simulate Barcode Scans every 30 seconds.");
@@ -310,12 +328,12 @@ POSConnectorClass = (function() {
           });
         }
       }, 30000);
-      _results = [];
+      results = [];
       while (i < receivedMessages.length) {
         _dispatchMessageFromObjC(receivedMessages[i]);
-        _results.push(i++);
+        results.push(i++);
       }
-      return _results;
+      return results;
     };
     send = function(data, responseCallback) {
       return _doSend({
@@ -364,7 +382,7 @@ POSConnectorClass = (function() {
     _dispatchMessageFromObjC = function(messageJSON) {
       var _timeoutDispatchMessageFromObjC;
       return setTimeout(_timeoutDispatchMessageFromObjC = function() {
-        var callbackResponseId, exception, handler, message, messageHandler, responseCallback;
+        var callbackResponseId, error, exception, handler, message, messageHandler, responseCallback;
         message = JSON.parse(messageJSON);
         messageHandler = void 0;
         if (message.responseId) {
@@ -391,8 +409,8 @@ POSConnectorClass = (function() {
           }
           try {
             return handler(message.data, responseCallback);
-          } catch (_error) {
-            exception = _error;
+          } catch (error) {
+            exception = error;
             if (typeof console !== "undefined") {
               return console.log("WebViewJavascriptBridge: WARNING: javascript handler threw.", message, exception);
             }
