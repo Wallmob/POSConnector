@@ -27,13 +27,8 @@ POSConnectorClass = (function() {
     return this._bridge != null;
   };
 
-  POSConnectorClass.prototype.getLoginInformation = function(login, callback) {
-    if (!this._validateLoginInformation(login).length) {
-      this._callHandler('getLoginInformation', login);
-    }
-    if (callback) {
-      return callback(this._validateLoginInformation(login));
-    }
+  POSConnectorClass.prototype.getLoginInformation = function(callback) {
+    return this._bridge.callHandler('getLoginInformation', {}, callback);
   };
 
 
@@ -52,6 +47,17 @@ POSConnectorClass = (function() {
     if (callback) {
       return callback(this._validateOrder(order));
     }
+  };
+
+
+  /**
+  	 * Subscribes for all loginInformation events
+  	 * @param  {Function} callback
+  	 * @return {}
+   */
+
+  POSConnectorClass.prototype.subscribeForLoginInformation = function(callback) {
+    return this._registerHandler('getLoginInformation', callback);
   };
 
 
@@ -156,13 +162,19 @@ POSConnectorClass = (function() {
   	 * @return {}
    */
 
-  POSConnectorClass.prototype._callHandler = function(handlerName, data) {
-    return this._bridge.callHandler(handlerName, data);
+  POSConnectorClass.prototype._callHandler = function(handlerName, data, callback) {
+    return this._bridge.callHandler(handlerName, callback, data);
   };
 
   POSConnectorClass.prototype._validateLoginInformation = function(login) {
-    var validationErrors;
+    var _addError, validationErrors;
     validationErrors = [];
+    _addError = function(errorCode, message) {
+      return validationErrors.push({
+        errorCode: errorCode,
+        message: message
+      });
+    };
     if (!login.shop_id) {
       _addError(1, 'Shop id must be provided');
     }
@@ -360,14 +372,11 @@ POSConnectorClass = (function() {
       messagingIframe.src = CUSTOM_PROTOCOL_SCHEME + "://" + QUEUE_HAS_MESSAGE;
       if (message.handlerName) {
         console.log('[POS Simulator]: Received handler(' + message.handlerName + ') with data: ', message.data);
-        console.log('[POS Simulator]: Invoking paymentStatus event in 10 seconds.');
-        if (messageHandlers['paymentStatus']) {
+        console.log('[POS Simulator]: Invoking ' + message.handlerName + ' event in 10 seconds.');
+        if (messageHandlers[message.handlerName]) {
           return setTimeout(function() {
-            return messageHandlers['paymentStatus']({
-              status: 1,
-              one_screen_order_id: message.data.id
-            });
-          }, 10000);
+            return messageHandlers[message.handlerName](message.data);
+          }, 100);
         }
       } else {
         return console.log("[POS Simulator]: Received message: ", message.data);

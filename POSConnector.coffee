@@ -20,9 +20,9 @@ class POSConnectorClass
 	isConnected: () ->
 		@_bridge?
 
-	getLoginInformation : (login, callback) ->
-		@_callHandler('getLoginInformation', login) if !@_validateLoginInformation(login).length
-		callback @_validateLoginInformation(login) if callback
+	getLoginInformation: (callback) ->
+		@_bridge.callHandler('getLoginInformation', {}, callback)
+
 
 	###*
 	 * Sends order object to POS after validating
@@ -34,14 +34,22 @@ class POSConnectorClass
 	payBasket: (order, callback) ->
 		@_callHandler('payBasket', order) if !@_validateOrder(order).length
 		callback @_validateOrder(order) if callback
-
+		
+	###*
+	 * Subscribes for all loginInformation events
+	 * @param  {Function} callback
+	 * @return {}
+	###
+	subscribeForLoginInformation: (callback) ->
+		@_registerHandler 'getLoginInformation', callback
+		
 	###*
 	 * Subscribes for all paymentStatus events
 	 * @param  {Function} callback
 	 * @return {}
 	###
 	subscribeForPaymentStatus: (callback) ->
-		@_registerHandler 'paymentStatus', callback
+		@_registerHandler 'paymentStatus', callback 
 
 	###*
 	 * Subscribes for all barcodeScan events
@@ -110,11 +118,16 @@ class POSConnectorClass
 	 * @param  {String} handlerName
 	 * @return {}
 	###
-	_callHandler: (handlerName, data) ->
-		@_bridge.callHandler handlerName, data
+	_callHandler: (handlerName, data, callback) ->
+		@_bridge.callHandler handlerName, callback, data
 
 	_validateLoginInformation : (login) -> 
 		validationErrors = []
+		
+		_addError = (errorCode, message) ->
+			#if not (validationError for validationError in validationErrors when validationError.errorCode is errorCode)
+			validationErrors.push {errorCode, message}
+			
 		if !login.shop_id
 			_addError 1, 'Shop id must be provided'
 		
@@ -241,10 +254,7 @@ class POSConnectorClass
 	    registerHandler = (handlerName, handler) ->
 	      messageHandlers[handlerName] = handler
 	    callHandler = (handlerName, data, responseCallback) ->
-	      _doSend
-	        handlerName: handlerName
-	        data: data
-	      , responseCallback
+	      _doSend(handlerName: handlerName, data: data, responseCallback)
 	    _doSend = (message, responseCallback) ->
 	      if responseCallback
 	        callbackId = "cb_" + (uniqueId++) + "_" + new Date().getTime()
@@ -254,11 +264,12 @@ class POSConnectorClass
 	      messagingIframe.src = CUSTOM_PROTOCOL_SCHEME + "://" + QUEUE_HAS_MESSAGE
 	      if message.handlerName
 	        console.log '[POS Simulator]: Received handler(' + message.handlerName + ') with data: ', message.data
-	        console.log '[POS Simulator]: Invoking paymentStatus event in 10 seconds.'
-	        if messageHandlers['paymentStatus']
+	        console.log '[POS Simulator]: Invoking ' + message.handlerName + ' event in 10 seconds.'
+			
+	        if messageHandlers[message.handlerName]
 	        	setTimeout ->
-	        		messageHandlers['paymentStatus']({status: 1, one_screen_order_id: message.data.id});
-	        	, 10000
+	        		messageHandlers[message.handlerName](message.data);
+	        	, 100
 	      else
 	        console.log "[POS Simulator]: Received message: ", message.data
 	    _fetchQueue = ->
