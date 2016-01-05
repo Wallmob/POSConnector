@@ -163,7 +163,7 @@ POSConnectorClass = (function() {
    */
 
   POSConnectorClass.prototype._callHandler = function(handlerName, data, callback) {
-    return this._bridge.callHandler(handlerName, callback, data);
+    return this._bridge.callHandler(handlerName, data, callback);
   };
 
   POSConnectorClass.prototype._validateLoginInformation = function(login) {
