@@ -119,7 +119,7 @@ class POSConnectorClass
 	 * @return {}
 	###
 	_callHandler: (handlerName, data, callback) ->
-		@_bridge.callHandler handlerName, callback, data
+		@_bridge.callHandler handlerName, data, callback
 
 	_validateLoginInformation : (login) -> 
 		validationErrors = []
