@@ -223,6 +223,9 @@ POSConnectorClass = (function() {
         if (order_line_item.quantity && order_line_item.quantity < 0) {
           _orderHasReturns = true;
         }
+        if (!order_line_item.quantity || order_line_item.quantity === 0) {
+          _addError(3, 'Each OrderLineItem must contain a quantity different than 0');
+        }
         if (!order_line_item.unit_price || !_isNumber(order_line_item.unit_price)) {
           _addError(4, 'Each OrderLineItem must contain unit price with a maximum of 2 decimals');
         }
@@ -235,7 +238,7 @@ POSConnectorClass = (function() {
         if (order_line_item.imei && !(typeof order_line_item.imei === "string" && order_line_item.imei !== "")) {
           _addError(7, 'If imei is present on OrderLineItem, it must of type string and non empty');
         }
-        if (order_line_item.unit_price && order_line_item.unit_price < 0) {
+        if (order_line_item.unit_price && order_line_item.unit_price <= 0) {
           _addError(8, 'If UnitPrice is present on OrderLineItem, it cannot be negative');
         }
         if (order_line_item.discounts) {

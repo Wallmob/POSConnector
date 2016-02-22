@@ -161,6 +161,8 @@ class POSConnectorClass
 			for order_line_item in order.order_line_items
 				if order_line_item.quantity and order_line_item.quantity < 0
 					_orderHasReturns = true
+				if !order_line_item.quantity or order_line_item.quantity == 0
+					_addError 3, 'Each OrderLineItem must contain a quantity different than 0'
 				if !order_line_item.unit_price or !_isNumber(order_line_item.unit_price)
 					_addError 4, 'Each OrderLineItem must contain unit price with a maximum of 2 decimals'
 				if !order_line_item.product_id or !(typeof order_line_item.product_id == "string" and order_line_item.product_id != "")
@@ -169,8 +171,8 @@ class POSConnectorClass
 					_addError 6, 'Each OrderLineItem must contain a vat rate from 0 to 1 with a maximum of 2 decimals'
 				if order_line_item.imei and !(typeof order_line_item.imei == "string" and order_line_item.imei != "")
 					_addError 7, 'If imei is present on OrderLineItem, it must of type string and non empty'
-				if order_line_item.unit_price and order_line_item.unit_price < 0
-					_addError 8, 'If UnitPrice is present on OrderLineItem, it cannot be negative'
+				if order_line_item.unit_price and order_line_item.unit_price <= 0
+					_addError 8, 'If UnitPrice is present on OrderLineItem, it cannot be negative' 
 				if order_line_item.discounts
 					for discount in order_line_item.discounts
 						if (discount.amount and discount.percentage)
