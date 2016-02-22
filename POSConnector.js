@@ -223,9 +223,6 @@ POSConnectorClass = (function() {
         if (order_line_item.quantity && order_line_item.quantity < 0) {
           _orderHasReturns = true;
         }
-        if (!order_line_item.quantity || order_line_item.quantity === 0) {
-          _addError(3, 'Each OrderLineItem must contain a quantity different than 0');
-        }
         if (!order_line_item.unit_price || !_isNumber(order_line_item.unit_price)) {
           _addError(4, 'Each OrderLineItem must contain unit price with a maximum of 2 decimals');
         }
