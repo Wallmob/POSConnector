@@ -226,7 +226,7 @@ POSConnectorClass = (function() {
         if (!order_line_item.quantity || order_line_item.quantity === 0) {
           _addError(3, 'Each OrderLineItem must contain a quantity different than 0');
         }
-        if (!order_line_item.unit_price || !_isNumber(order_line_item.unit_price)) {
+        if ((order_line_item.unit_price !== 0 && !order_line_item.unit_price) || !_isNumber(order_line_item.unit_price)) {
           _addError(4, 'Each OrderLineItem must contain unit price with a maximum of 2 decimals');
         }
         if (!order_line_item.product_id || !(typeof order_line_item.product_id === "string" && order_line_item.product_id !== "")) {
