@@ -156,8 +156,8 @@ var POSConnector = (function () {
      * @enum {string}
      */
     connector.EventType = {
-        Connected: "connected",
-        BarcodeScanned: "barcodeScanned"
+        Connected: "Connected",
+        BarcodeScanned: "BarcodeScanned"
     };
 
     /**
