@@ -247,13 +247,13 @@ var POSConnector = (function () {
 
     /**
      * Add an event listener
-     * @function POSConnector.on
+     * @function POSConnector.addEventListener
      * @param {EventType} type - The type of event to listen for
      * @param {connectedListener | barcodeScannedListener} listener - The listener function to add
      */
-    connector.on = function (type, listener) {
+    connector.addEventListener = function (type, listener) {
         var params = [type, listener];
-        console.log("on: " + params.join(", "));
+        console.log("addEventListener: " + params.join(", "));
         listenerObjects.push(new Listener(type, listener));
     };
 

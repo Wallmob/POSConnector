@@ -16,7 +16,7 @@ Allows for communication with the native POS application.
             * [new Discount(amount, description, [percentage])](#new_POSConnector.Discount_new)
         * [.Basket](#POSConnector.Basket)
             * [new Basket(id, lineItems, [transactions], [discounts])](#new_POSConnector.Basket_new)
-        * [.on(type, listener)](#POSConnector.on)
+        * [.addEventListener(type, listener)](#POSConnector.addEventListener)
         * [.removeEventListener(listener)](#POSConnector.removeEventListener)
         * [.isConnected()](#POSConnector.isConnected) ⇒ <code>boolean</code>
         * [.payBasket(basket, callback)](#POSConnector.payBasket)
@@ -94,9 +94,9 @@ Represents a shopping basket
 | [transactions] | <code>Array.&lt;Transaction&gt;</code> | Transactions on the basket |
 | [discounts] | <code>Array.&lt;Discount&gt;</code> | Discounts on the basket |
 
-<a name="POSConnector.on"></a>
+<a name="POSConnector.addEventListener"></a>
 
-### POSConnector.on(type, listener)
+### POSConnector.addEventListener(type, listener)
 Add an event listener
 
 **Kind**: static method of <code>[POSConnector](#POSConnector)</code>  
