@@ -1,19 +1,15 @@
 {
-  "name": "OneScreenPOSConnector",
-  "version": "0.0.0",
-  "description": "JS connector between Wallmob POS and Telenor OneScreen",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Rasmus Knudsen (Wallmob)",
+  "name": "POSConnector",
+  "version": "1.0.0",
+  "description": "Javascript module for communicating with Wallmob's native POS applications",
+  "main": "POSConnector.js",
+  "author": "Rasmus Taulborg Hummelmose",
   "license": "ISC",
   "devDependencies": {
-    "coffee-script": "^1.8.0",
-    "gulp": "^3.8.9",
-    "gulp-coffee": "*",
+    "gulp": "*",
+    "gulp-rename": "*",
+    "gulp-uglify": "*",
     "gulp-watch": "*",
-    "gulp-uglify": "^1.0.1",
-    "gulp-rename": "^1.2.0"
+    "gulp-jsdoc-to-markdown": "*"
   }
 }

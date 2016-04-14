@@ -1,224 +1,167 @@
-#POSConnector
-JS Library for communicating with the Wallmob POS
-<br>
-* [Setup](#setup)
-* [API](#api)
-  * [Methods](#methods)
-    * [isConnected](#check-if-the-pos-is-present)
-    * [payBasket](#send-order-to-the-pos)
-  * [Events](#events)
-    * [onConnect](#subscribe-for-connect-event)
-    * [subscribeForPaymentStatus](#subscribe-for-paymentstatus-events-sent-from-the-pos)
-    * [subscribeForBarcodeScan](#subscribe-for-barcodescan-events-sent-from-the-pos)
-    * [subscribeForHomeButton](#subscribe-for-gohome-events-sent-from-the-pos)
-* [Testing in a browser-only environment](#testing-in-a-browser-only-environment)
+<a name="POSConnector"></a>
 
-<br>
-##Setup
+## POSConnector
+POSConnector
+Allows for communication with the native POS application.
 
-To use the POSConnector in your own project, include the script file in your header.
-```html
-<script src="POSConnector.min.js"></script>
-```
-<br>
-##API
+**Kind**: global class  
 
-##Methods
+* [POSConnector](#POSConnector)
+    * _static_
+        * [.LineItem](#POSConnector.LineItem)
+            * [new LineItem(name, quantity, unitPrice, vatPercentage, salesTaxPercentage, [productId], [imei], [discounts])](#new_POSConnector.LineItem_new)
+        * [.Transaction](#POSConnector.Transaction)
+            * [new Transaction(type, amount)](#new_POSConnector.Transaction_new)
+        * [.Discount](#POSConnector.Discount)
+            * [new Discount(amount, description, [percentage])](#new_POSConnector.Discount_new)
+        * [.Basket](#POSConnector.Basket)
+            * [new Basket(id, lineItems, [transactions], [discounts])](#new_POSConnector.Basket_new)
+        * [.on(type, listener)](#POSConnector.on)
+        * [.removeEventListener(listener)](#POSConnector.removeEventListener)
+        * [.isConnected()](#POSConnector.isConnected) ⇒ <code>boolean</code>
+        * [.payBasket(basket, callback)](#POSConnector.payBasket)
+    * _inner_
+        * [~connectionEstablishedListener](#POSConnector..connectionEstablishedListener) : <code>function</code>
+        * [~barcodeScannedListener](#POSConnector..barcodeScannedListener) : <code>function</code>
+        * [~payBasketCallback](#POSConnector..payBasketCallback) : <code>function</code>
 
-#####Check if the POS is present
-```javascript
-POSConnector.isConnected();
-````
-```javascript
-// Example
-var connected = POSConnector.isConnected(); // connected = true or false
-````
-<br>
-#####Send Order to the POS
-```javascript
-POSConnector.payBasket(Order, CallbackFn);
-````
-```javascript
-// Example
-// JSON-style double quotes around attribute names are optional in JavaScript objects
-var Order = {
-   "id":"OneScreenOrderId",
-   "order_line_items":[
-      {
-         "quantity":2,
-         "unit_price":110.50,
-         "product_id":"OneScreenProductId1",
-         "name":"OneScreenProductName1",
-         "vat_percentage":0.2,
-         "imei":"AA-BBBBBB-CCCCCC-D",
-         "discounts":[
-            {
-               "amount":10.25,
-               "percentage":null,
-               "description":"Manual discount"
-            }
-         ]
-      },
-      {
-         "quantity":1,
-         "unit_price":200.00,
-         "product_id":"OneScreenProductId2",
-         "name":"OneScreenProductName2",
-         "vat_percentage":0.25
-      }
-   ],
-   "discounts":[
-      {
-         "amount":null,
-         "percentage":0.25,
-         "description":"Offer 25% on the basket"
-      }
-   ],
-   "transactions":[
-      {
-         "type":"WM_TRANSACTION_TYPE_INSTALLMENT",
-         "amount":600.00
-      }
-   ]
-}
-POSConnector.payBasket(Order, function(errors){
-  console.log(errors); // Array of possible validation errors
-});
-````
-<br>
+<a name="POSConnector.LineItem"></a>
 
-##Events
+### POSConnector.LineItem
+**Kind**: static class of <code>[POSConnector](#POSConnector)</code>  
+<a name="new_POSConnector.LineItem_new"></a>
 
-#####Subscribe for connect event
-```javascript
-POSConnector.onConnect(CallbackFn);
-````
-```javascript
-// Example
-// Use this to initialize and register your event listeners
-POSConnector.onConnect(function(){
-   POSConnector.subscribeForBarcodeScan(function(barcode){
-      console.log(barcode);
-   });
-});
-````
-<br>
-#####Subscribe for paymentStatus events sent from the POS
-```javascript
-POSConnector.subscribeForPaymentStatus(CallbackFn);
-````
-```javascript
-// Example
-POSConnector.subscribeForPaymentStatus(function(status){
-  console.log("Payment Status received from POS: ", status);
-});
-````
-<br>
-#####Subscribe for barcodeScan events sent from the POS
-```javascript
-POSConnector.subscribeForBarcodeScan(CallbackFn);
-````
-```javascript
-// Example
-POSConnector.subscribeForBarcodeScan(function(barcode){
-  console.log("Product scanned on the POS with barcode: ", barcode);
-});
-````
-<br>
-#####Subscribe for goHome events sent from the POS
-```javascript
-POSConnector.subscribeForHomeButton(CallbackFn);
-````
-```javascript
-// Example
-POSConnector.subscribeForHomeButton(function(){
-  console.log("Home button clicked in the POS");
-});
-````
-<br>
-##Testing in a browser-only environment
+#### new LineItem(name, quantity, unitPrice, vatPercentage, salesTaxPercentage, [productId], [imei], [discounts])
+Represents a line item
 
-#####Simulate presence of the POS
-```javascript
-POSConnector.simulatePos();
-/* 
-   After starting the simulator, the barcodeScan event will
-   be triggered every 30 seconds with a fixed barcode for testing.
-   When sending an Order with the payBasket() method, the paymentStatus
-   event will be triggered 10 seconds afterwards.
-   Remember to subscribe for the Barcode and Payment Status events.
-*/
-````
-```javascript
-// Full example
-POSConnector.simulatePos();
-// Check browser console for more information after invoking this method
 
-// Create dummy Order object
-var Order = {
-   "id":"OneScreenOrderId",
-   "order_line_items":[
-      {
-         "quantity":2,
-         "unit_price":110.50,
-         "product_id":"OneScreenProductId1",
-         "name":"OneScreenProductName1",
-         "vat_percentage":0.2,
-         "imei":"AA-BBBBBB-CCCCCC-D",
-         "discounts":[
-            {
-               "amount":10.25,
-               "percentage":null,
-               "description":"Manual discount"
-            }
-         ]
-      },
-      {
-         "quantity":1,
-         "unit_price":200.00,
-         "product_id":"OneScreenProductId2",
-         "name":"OneScreenProductName2",
-         "vat_percentage":0.25
-      }
-   ],
-   "discounts":[
-      {
-         "amount":null,
-         "percentage":0.25,
-         "description":"Offer 25% on the basket"
-      }
-   ],
-   "transactions":[
-      {
-         "type":"WM_TRANSACTION_TYPE_INSTALLMENT",
-         "amount":600.00
-      }
-   ]
-}
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Name of the line item |
+| quantity | <code>number</code> | Number of items, positive or negative, represented on the line (eg. 5) |
+| unitPrice | <code>number</code> | The price of each item on the line (eg. 9.95) |
+| vatPercentage | <code>number</code> | The VAT included in the unit price (eg. 0.25) |
+| salesTaxPercentage | <code>number</code> | The sales tax to apply to the unit price (eg. 0.05) |
+| [productId] | <code>string</code> | Id of the product represented on the line |
+| [imei] | <code>string</code> | IMEI of the product represented on the line |
+| [discounts] | <code>Array.&lt;Discount&gt;</code> | Discounts on the line item |
 
-// Listen for connect event
-POSConnector.onConnect(function(){
+<a name="POSConnector.Transaction"></a>
 
-  // Subscribe for status messages from POS
-  POSConnector.subscribeForPaymentStatus(function(status){
-    console.log(status);
-  });
+### POSConnector.Transaction
+**Kind**: static class of <code>[POSConnector](#POSConnector)</code>  
+<a name="new_POSConnector.Transaction_new"></a>
 
-  // Subscribe for barcode scans from POS
-  POSConnector.subscribeForBarcodeScan(function(barcode){
-    console.log(barcode);
-  });
-  
-  // Send Order to the POS
-  POSConnector.payBasket(Order, function(errors){
-    if(errors.length){
-      // Order was not sent due to errors
-      console.log(errors);
-    }else{
-      // Order was sent succesfully
-    }
-  });
-  
-});
-````
-<br>
+#### new Transaction(type, amount)
+Represents a payment transaction
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| type | <code>POSConnector.TransactionType</code> | The type of payment transaction |
+| amount | <code>number</code> | Amount payed by the transaction |
+
+<a name="POSConnector.Discount"></a>
+
+### POSConnector.Discount
+**Kind**: static class of <code>[POSConnector](#POSConnector)</code>  
+<a name="new_POSConnector.Discount_new"></a>
+
+#### new Discount(amount, description, [percentage])
+Represents a discount on either a basket or a line item
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| amount | <code>number</code> | Amount that the discount applies (eg. 90.50) |
+| description | <code>string</code> | Reason for the discount to be given (shown on receipt) |
+| [percentage] | <code>number</code> | Just for information, it won't affect the amount (eg. 0.5) |
+
+<a name="POSConnector.Basket"></a>
+
+### POSConnector.Basket
+**Kind**: static class of <code>[POSConnector](#POSConnector)</code>  
+<a name="new_POSConnector.Basket_new"></a>
+
+#### new Basket(id, lineItems, [transactions], [discounts])
+Represents a shopping basket
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>string</code> | Id of the basket |
+| lineItems | <code>Array.&lt;LineItem&gt;</code> | Line items contained in the basket |
+| [transactions] | <code>Array.&lt;Transaction&gt;</code> | Transactions on the basket |
+| [discounts] | <code>Array.&lt;Discount&gt;</code> | Discounts on the basket |
+
+<a name="POSConnector.on"></a>
+
+### POSConnector.on(type, listener)
+Add an event listener
+
+**Kind**: static method of <code>[POSConnector](#POSConnector)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| type | <code>EventType</code> | The type of event to listen for |
+| listener | <code>connectedListener</code> &#124; <code>barcodeScannedListener</code> | The listener function to add |
+
+<a name="POSConnector.removeEventListener"></a>
+
+### POSConnector.removeEventListener(listener)
+Remove an event listener
+
+**Kind**: static method of <code>[POSConnector](#POSConnector)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| listener | <code>connectedListener</code> &#124; <code>barcodeScannedListener</code> | The listener function to remove |
+
+<a name="POSConnector.isConnected"></a>
+
+### POSConnector.isConnected() ⇒ <code>boolean</code>
+Check for connection toward the POS
+
+**Kind**: static method of <code>[POSConnector](#POSConnector)</code>  
+**Returns**: <code>boolean</code> - The connection status  
+<a name="POSConnector.payBasket"></a>
+
+### POSConnector.payBasket(basket, callback)
+Pass a basket to the POS for payment processing
+
+**Kind**: static method of <code>[POSConnector](#POSConnector)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| basket | <code>[Basket](#POSConnector.Basket)</code> | Basket to pass on to the POS |
+| callback | <code>[payBasketCallback](#POSConnector..payBasketCallback)</code> | Called when the operation concluded |
+
+<a name="POSConnector..connectionEstablishedListener"></a>
+
+### POSConnector~connectionEstablishedListener : <code>function</code>
+Passed to POSConnector.on for EventType.Connected
+
+**Kind**: inner typedef of <code>[POSConnector](#POSConnector)</code>  
+<a name="POSConnector..barcodeScannedListener"></a>
+
+### POSConnector~barcodeScannedListener : <code>function</code>
+Passed to POSConnector.on for EventType.BarcodeScanned
+
+**Kind**: inner typedef of <code>[POSConnector](#POSConnector)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| barcode | <code>string</code> | The barcode that was scanned |
+
+<a name="POSConnector..payBasketCallback"></a>
+
+### POSConnector~payBasketCallback : <code>function</code>
+Passed to the payBasket function
+
+**Kind**: inner typedef of <code>[POSConnector](#POSConnector)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| success | <code>boolean</code> | Whether or not the payment was completed |
+| [error] | <code>string</code> | Optional string describing what went wrong |
+
