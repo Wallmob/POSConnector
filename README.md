@@ -16,14 +16,18 @@ Allows for communication with the native POS application.
             * [new Discount(amount, description, [percentage])](#new_POSConnector.Discount_new)
         * [.Basket](#POSConnector.Basket)
             * [new Basket(id, lineItems, [transactions], [discounts])](#new_POSConnector.Basket_new)
+        * [.LoginInformation](#POSConnector.LoginInformation)
+            * [new LoginInformation(shopId, shopName, registerId, registerName, userId, userName)](#new_POSConnector.LoginInformation_new)
         * [.addEventListener(type, listener)](#POSConnector.addEventListener)
         * [.removeEventListener(listener)](#POSConnector.removeEventListener)
         * [.isConnected()](#POSConnector.isConnected) ⇒ <code>boolean</code>
         * [.payBasket(basket, callback)](#POSConnector.payBasket)
+        * [.getLoginInformation(callback)](#POSConnector.getLoginInformation)
     * _inner_
         * [~connectionEstablishedListener](#POSConnector..connectionEstablishedListener) : <code>function</code>
         * [~barcodeScannedListener](#POSConnector..barcodeScannedListener) : <code>function</code>
         * [~payBasketCallback](#POSConnector..payBasketCallback) : <code>function</code>
+        * [~getLoginInformationCallback](#POSConnector..getLoginInformationCallback) : <code>function</code>
 
 <a name="POSConnector.LineItem"></a>
 
@@ -94,6 +98,23 @@ Represents a shopping basket
 | [transactions] | <code>Array.&lt;Transaction&gt;</code> | Transactions on the basket |
 | [discounts] | <code>Array.&lt;Discount&gt;</code> | Discounts on the basket |
 
+<a name="POSConnector.LoginInformation"></a>
+
+### POSConnector.LoginInformation
+**Kind**: static class of <code>[POSConnector](#POSConnector)</code>  
+<a name="new_POSConnector.LoginInformation_new"></a>
+
+#### new LoginInformation(shopId, shopName, registerId, registerName, userId, userName)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| shopId | <code>string</code> | Shop's id |
+| shopName | <code>string</code> | Shop's name |
+| registerId | <code>string</code> | Register's id |
+| registerName | <code>string</code> | Register's name |
+| userId | <code>string</code> | User's id |
+| userName | <code>string</code> | User's name |
+
 <a name="POSConnector.addEventListener"></a>
 
 ### POSConnector.addEventListener(type, listener)
@@ -134,7 +155,18 @@ Pass a basket to the POS for payment processing
 | Param | Type | Description |
 | --- | --- | --- |
 | basket | <code>[Basket](#POSConnector.Basket)</code> | Basket to pass on to the POS |
-| callback | <code>[payBasketCallback](#POSConnector..payBasketCallback)</code> | Called when the operation concluded |
+| callback | <code>[payBasketCallback](#POSConnector..payBasketCallback)</code> | Called when the operation concludes |
+
+<a name="POSConnector.getLoginInformation"></a>
+
+### POSConnector.getLoginInformation(callback)
+Get current login information from the native POS
+
+**Kind**: static method of <code>[POSConnector](#POSConnector)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>[getLoginInformationCallback](#POSConnector..getLoginInformationCallback)</code> | Called when the operation concludes |
 
 <a name="POSConnector..connectionEstablishedListener"></a>
 
@@ -164,4 +196,16 @@ Passed to the payBasket function
 | --- | --- | --- |
 | success | <code>boolean</code> | Whether or not the payment was completed |
 | [error] | <code>string</code> | Optional string describing what went wrong |
+
+<a name="POSConnector..getLoginInformationCallback"></a>
+
+### POSConnector~getLoginInformationCallback : <code>function</code>
+Passed to the getLoginInformation function
+
+**Kind**: inner typedef of <code>[POSConnector](#POSConnector)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [result] | <code>[LoginInformation](#POSConnector.LoginInformation)</code> | The requested login information if successful |
+| [error] | <code>string</code> | The error that occured if unsuccessful |
 

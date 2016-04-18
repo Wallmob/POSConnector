@@ -7,9 +7,9 @@ var POSConnectorTests = (function () {
         return;
     }
 
-    tests.TestPayBasketCallback = function (success, error) {
+    tests.PayBasketCallback = function (success, error) {
         var params = [success, error];
-        console.log("TestPayBasketCallback: " + params.join(", "));
+        console.log("PayBasketCallback: " + params.join(", "));
     };
 
     tests.TestPayBasket = function () {
@@ -20,7 +20,26 @@ var POSConnectorTests = (function () {
         var transaction = new POSConnector.Transaction(POSConnector.TransactionType.Installment, 4000);
         var dummyId = Math.random().toString();
         var basket = new POSConnector.Basket(dummyId, [lineItem1, lineItem2], [transaction], [discount]);
-        POSConnector.payBasket(basket, example.TestPayBasketCallback);
+        POSConnector.payBasket(basket, tests.PayBasketCallback);
+    };
+
+    tests.GetLoginInformationCallback = function (loginInformation, error) {
+        console.log("GetLoginInformationCallback");
+        if (loginInformation) {
+            console.log("Shop id: " + loginInformation.shopId);
+            console.log("Shop name: " + loginInformation.shopName);
+            console.log("Register id: " + loginInformation.registerId);
+            console.log("Register name: " + loginInformation.registerName);
+            console.log("User id: " + loginInformation.userId);
+            console.log("User name: " + loginInformation.userName);
+        }
+        if (error) {
+            console.log("Error: " + error);
+        }
+    };
+
+    tests.TestGetLoginInformation = function () {
+        POSConnector.getLoginInformation(tests.GetLoginInformationCallback);
     };
 
     return tests;

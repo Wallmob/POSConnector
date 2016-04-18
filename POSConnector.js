@@ -17,6 +17,13 @@
  */
 
 /**
+ * Passed to the getLoginInformation function
+ * @callback POSConnector~getLoginInformationCallback
+ * @param {POSConnector.LoginInformation} [result] - The requested login information if successful
+ * @param {string} [error] - The error that occured if unsuccessful
+ */
+
+/**
  * @class POSConnector
  * Allows for communication with the native POS application.
  */
@@ -41,6 +48,19 @@ var POSConnector = (function () {
         PayBasket: "PayBasket",
         PayBasketCallback: "PayBasketCallback",
         BarcodeScanned: "BarcodeScanned"
+    };
+
+    /**
+     * Enum of possible message body keys
+     * @private
+     * @enum {string} POSConnector~MessageBodyKey
+     */
+    var MessageBodyKey = {
+        Result: "result",
+        Error: "error",
+        Success: "success",
+        LoginInformation: "loginInformation",
+        Basket: "basket"
     };
 
     /**
@@ -92,12 +112,29 @@ var POSConnector = (function () {
     }
 
     /**
+     * Retrieves a callback by its id, deleting it from the callback array
+     * @private
+     * @function POSConnector~callbackByDeletingCallbackWithId
+     * @param {number} callbackId - Callback Id
+     * @return {POSConnector~getLoginInformationCallback | POSConnector~payBasketCallback} The callback
+     */
+    function callbackByDeletingCallbackWithId(callbackId) {
+        if (callbackId === undefined || callbackId === null) {
+            return;
+        }
+        var callback = callbacksKeyedByIds[callbackId];
+        delete callbacksKeyedByIds[callbackId];
+        return callback;
+    }
+
+    /**
      * Send a message to the POS application
      * @private
      * @function POSConnector~sendMessage
      * @param {POSConnector~Message} message - The message to send
      */
     function sendMessage(message) {
+        console.log("sendMessage: " + message);
         window.webkit.messageHandlers.POS.postMessage(message);
     }
 
@@ -130,6 +167,38 @@ var POSConnector = (function () {
     }
 
     /**
+     * Handle reception of a message named GetLoginInformationCallback
+     * @private
+     * @function POSConnector~handleGetLoginInformationCallbackMessage
+     * @param {POSConnector~Message} message - The message in question
+     */
+    function handleGetLoginInformationCallbackMessage(message) {
+        var callback = callbackByDeletingCallbackWithId(message.callbackId);
+        if (!callback) {
+            return;
+        }
+        var loginInformation = message.body.result;
+        var error = message.body.error;
+        callback(loginInformation, error);
+    }
+
+    /**
+     * Handle reception of a message named PayBasketCallback
+     * @private
+     * @function POSConnector~handlePayBasketCallbackMessage
+     * @param {POSConnector~Message} message - The message in question
+     */
+    function handlePayBasketCallbackMessage(message) {
+        var callback = callbackByDeletingCallbackWithId(message.callbackId);
+        if (!callback) {
+            return;
+        }
+        var success = message.body.success;
+        var error = message.body.error;
+        callback(success, error);
+    }
+
+    /**
      * Receive a message from the POS application. Never call this function.
      * @private
      * @function POSConnector.receiveMessage
@@ -143,6 +212,12 @@ var POSConnector = (function () {
             break;
         case MessageName.BarcodeScanned:
             handleBarcodeScannedMessage(message);
+            break;
+        case MessageName.GetLoginInformationCallback:
+            handleGetLoginInformationCallbackMessage(message);
+            break;
+        case MessageName.PayBasketCallback:
+            handlePayBasketCallbackMessage(message);
             break;
         default:
             console.log("Unknown message name: " + message.name);
@@ -237,6 +312,26 @@ var POSConnector = (function () {
     };
 
     /**
+     * @class POSConnector.LoginInformation
+     * @param {string} shopId - Shop's id
+     * @param {string} shopName - Shop's name
+     * @param {string} registerId - Register's id
+     * @param {string} registerName - Register's name
+     * @param {string} userId - User's id
+     * @param {string} userName - User's name
+     */
+    connector.LoginInformation = function (shopId, shopName, registerId, registerName, userId, userName) {
+        var loginInformation = {};
+        loginInformation.shopId = shopId;
+        loginInformation.shopName = shopName;
+        loginInformation.registerId = registerId;
+        loginInformation.registerName = registerName;
+        loginInformation.userId = userId;
+        loginInformation.userName = userName;
+        return loginInformation;
+    };
+
+    /**
      * Enum of possible event types
      * @enum {string} POSConnector.EventType
      */
@@ -284,7 +379,7 @@ var POSConnector = (function () {
      * Pass a basket to the POS for payment processing
      * @function POSConnector.payBasket
      * @param {POSConnector.Basket} basket - Basket to pass on to the POS
-     * @param {POSConnector~payBasketCallback} callback - Called when the operation concluded
+     * @param {POSConnector~payBasketCallback} callback - Called when the operation concludes
      */
     connector.payBasket = function (basket, callback) {
         var params = [basket, callback];
@@ -293,7 +388,24 @@ var POSConnector = (function () {
             callback(false, Error.NotConnected);
             return;
         }
-        var message = new Message(MessageName.PayBasket, callback, basket);
+        var messageBody = {};
+        messageBody[MessageBodyKey.Basket] = basket;
+        var message = new Message(MessageName.PayBasket, callback, messageBody);
+        sendMessage(message);
+    };
+
+    /**
+     * Get current login information from the native POS
+     * @function POSConnector.getLoginInformation
+     * @param {POSConnector~getLoginInformationCallback} callback - Called when the operation concludes
+     */
+    connector.getLoginInformation = function (callback) {
+        console.log("getLoginInformation: " + callback);
+        if (!connector.isConnected()) {
+            callback(null, Error.NotConnected);
+            return;
+        }
+        var message = new Message(MessageName.GetLoginInformation, callback);
         sendMessage(message);
     };
 
