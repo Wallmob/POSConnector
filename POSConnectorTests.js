@@ -43,6 +43,15 @@ var POSConnectorTests = (function () {
         });
     };
 
+    tests.TestOpenURL = function (url) {
+        POSConnector.openURL(url, function(error) {
+            console.log("OpenURLCallback");
+            if (error) {
+                console.log("Error: " + error);
+            }
+        });
+    };
+
     POSConnector.addEventListener(POSConnector.EventType.BarcodeScanned, function (barcode) {
         console.log("Barcode scanned: " + barcode);
     });
