@@ -255,7 +255,7 @@ var POSConnector = (function () {
      */
     connector.TransactionType = {
         Cash: "Cash",
-        Debitor: "Debitor",
+        DebitorAccount: "DebitorAccount",
         Ecommerce: "Ecommerce",
         External: "External",
         ExternalCard: "ExternalCard",
@@ -269,12 +269,12 @@ var POSConnector = (function () {
     /**
      * Represents a payment transaction
      * @class POSConnector.Transaction
-     * @param {POSConnector.TransactionType} type - The type of payment transaction
+     * @param {POSConnector.TransactionType} transactionType - The type of payment transaction
      * @param {number} amount - Amount payed by the transaction
      */
-    connector.Transaction = function (type, amount) {
+    connector.Transaction = function (transactionType, amount) {
         var transaction = {};
-        transaction.type = type;
+        transaction.transactionType = transactionType;
         transaction.amount = amount;
         return transaction;
     };
@@ -282,14 +282,14 @@ var POSConnector = (function () {
     /**
      * Represents a discount on either a basket or a line item
      * @class POSConnector.Discount
-     * @param {number} amount - Amount that the discount applies (eg. 90.50)
      * @param {string} description - Reason for the discount to be given (shown on receipt)
-     * @param {number} [percentage] - Just for information, it won't affect the amount (eg. 0.5)
+     * @param {number} [amount] - Amount that the discount applies (eg. 90.50). Do not pass if passing percentage.
+     * @param {number} [percentage] - The percentage which will be calculated based on what it's applied to (eg. 0.5). Do not pass if passing amount.
      */
-    connector.Discount = function (amount, description, percentage) {
+    connector.Discount = function (description, amount, percentage) {
         var discount = {};
-        discount.amount = amount;
         discount.description = description;
+        discount.amount = amount;
         discount.percentage = percentage;
         return discount;
     };
@@ -343,8 +343,8 @@ var POSConnector = (function () {
     /**
      * Add an event listener
      * @function POSConnector.addEventListener
-     * @param {EventType} type - The type of event to listen for
-     * @param {connectedListener | barcodeScannedListener} listener - The listener function to add
+     * @param {POSConnector.EventType} type - The type of event to listen for
+     * @param {POSConnector~connectedListener | POSConnector~barcodeScannedListener} listener - The listener function to add
      */
     connector.addEventListener = function (type, listener) {
         var params = [type, listener];
@@ -355,7 +355,7 @@ var POSConnector = (function () {
     /**
      * Remove an event listener
      * @function POSConnector.removeEventListener
-     * @param {connectedListener | barcodeScannedListener} listener - The listener function to remove
+     * @param {POSConnector~connectedListener | POSConnector~barcodeScannedListener} listener - The listener function to remove
      */
     connector.removeEventListener = function (listener) {
         console.log("removeEventListener: " + listener);

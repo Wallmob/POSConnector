@@ -1,16 +1,13 @@
 var POSConnectorTests = (function () {
 
+    "use_strict";
+
     var tests = {};
 
     if (POSConnector === undefined) {
         console.log("POSConnector is required for the example to run");
         return;
     }
-
-    tests.PayBasketCallback = function (success, error) {
-        var params = [success, error];
-        console.log("PayBasketCallback: " + params.join(", "));
-    };
 
     tests.TestPayBasket = function () {
         var lineItem1 = new POSConnector.LineItem("Apple Lightning Cable", 2, 99.95, 0.25, 0);
@@ -20,28 +17,40 @@ var POSConnectorTests = (function () {
         var transaction = new POSConnector.Transaction(POSConnector.TransactionType.Installment, 4000);
         var dummyId = Math.random().toString();
         var basket = new POSConnector.Basket(dummyId, [lineItem1, lineItem2], [transaction], [discount]);
-        POSConnector.payBasket(basket, tests.PayBasketCallback);
-    };
-
-    tests.GetLoginInformationCallback = function (loginInformation, error) {
-        console.log("GetLoginInformationCallback");
-        if (loginInformation) {
-            console.log("Shop id: " + loginInformation.shopId);
-            console.log("Shop name: " + loginInformation.shopName);
-            console.log("Register id: " + loginInformation.registerId);
-            console.log("Register name: " + loginInformation.registerName);
-            console.log("User id: " + loginInformation.userId);
-            console.log("User name: " + loginInformation.userName);
-        }
-        if (error) {
-            console.log("Error: " + error);
-        }
+        POSConnector.payBasket(basket, function (success, error) {
+            console.log("PayBasketCallback: " + success);
+            console.log("ID: " + dummyId);
+            if (error) {
+                console.log("Error: " + error);
+            }
+        });
     };
 
     tests.TestGetLoginInformation = function () {
-        POSConnector.getLoginInformation(tests.GetLoginInformationCallback);
+        POSConnector.getLoginInformation(function (loginInformation, error) {
+            console.log("GetLoginInformationCallback");
+            if (loginInformation) {
+                console.log("Shop id: " + loginInformation.shopId);
+                console.log("Shop name: " + loginInformation.shopName);
+                console.log("Register id: " + loginInformation.registerId);
+                console.log("Register name: " + loginInformation.registerName);
+                console.log("User id: " + loginInformation.userId);
+                console.log("User name: " + loginInformation.userName);
+            }
+            if (error) {
+                console.log("Error: " + error);
+            }
+        });
     };
+
+    POSConnector.addEventListener(POSConnector.EventType.BarcodeScanned, function (barcode) {
+        console.log("Barcode scanned: " + barcode);
+    });
+
+    POSConnector.addEventListener(POSConnector.EventType.ConnectionEstablished, function () {
+        console.log("Connection established");
+    });
 
     return tests;
 
-})();
+}());

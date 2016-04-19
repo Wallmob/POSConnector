@@ -11,9 +11,9 @@ Allows for communication with the native POS application.
         * [.LineItem](#POSConnector.LineItem)
             * [new LineItem(name, quantity, unitPrice, vatPercentage, salesTaxPercentage, [productId], [imei], [discounts])](#new_POSConnector.LineItem_new)
         * [.Transaction](#POSConnector.Transaction)
-            * [new Transaction(type, amount)](#new_POSConnector.Transaction_new)
+            * [new Transaction(transactionType, amount)](#new_POSConnector.Transaction_new)
         * [.Discount](#POSConnector.Discount)
-            * [new Discount(amount, description, [percentage])](#new_POSConnector.Discount_new)
+            * [new Discount(description, [amount], [percentage])](#new_POSConnector.Discount_new)
         * [.Basket](#POSConnector.Basket)
             * [new Basket(id, lineItems, [transactions], [discounts])](#new_POSConnector.Basket_new)
         * [.LoginInformation](#POSConnector.LoginInformation)
@@ -56,13 +56,13 @@ Represents a line item
 **Kind**: static class of <code>[POSConnector](#POSConnector)</code>  
 <a name="new_POSConnector.Transaction_new"></a>
 
-#### new Transaction(type, amount)
+#### new Transaction(transactionType, amount)
 Represents a payment transaction
 
 
 | Param | Type | Description |
 | --- | --- | --- |
-| type | <code>POSConnector.TransactionType</code> | The type of payment transaction |
+| transactionType | <code>POSConnector.TransactionType</code> | The type of payment transaction |
 | amount | <code>number</code> | Amount payed by the transaction |
 
 <a name="POSConnector.Discount"></a>
@@ -71,15 +71,15 @@ Represents a payment transaction
 **Kind**: static class of <code>[POSConnector](#POSConnector)</code>  
 <a name="new_POSConnector.Discount_new"></a>
 
-#### new Discount(amount, description, [percentage])
+#### new Discount(description, [amount], [percentage])
 Represents a discount on either a basket or a line item
 
 
 | Param | Type | Description |
 | --- | --- | --- |
-| amount | <code>number</code> | Amount that the discount applies (eg. 90.50) |
 | description | <code>string</code> | Reason for the discount to be given (shown on receipt) |
-| [percentage] | <code>number</code> | Just for information, it won't affect the amount (eg. 0.5) |
+| [amount] | <code>number</code> | Amount that the discount applies (eg. 90.50). Do not pass if passing percentage. |
+| [percentage] | <code>number</code> | The percentage which will be calculated based on what it's applied to (eg. 0.5). Do not pass if passing amount. |
 
 <a name="POSConnector.Basket"></a>
 
@@ -124,8 +124,8 @@ Add an event listener
 
 | Param | Type | Description |
 | --- | --- | --- |
-| type | <code>EventType</code> | The type of event to listen for |
-| listener | <code>connectedListener</code> &#124; <code>barcodeScannedListener</code> | The listener function to add |
+| type | <code>POSConnector.EventType</code> | The type of event to listen for |
+| listener | <code>POSConnector~connectedListener</code> &#124; <code>[barcodeScannedListener](#POSConnector..barcodeScannedListener)</code> | The listener function to add |
 
 <a name="POSConnector.removeEventListener"></a>
 
@@ -136,7 +136,7 @@ Remove an event listener
 
 | Param | Type | Description |
 | --- | --- | --- |
-| listener | <code>connectedListener</code> &#124; <code>barcodeScannedListener</code> | The listener function to remove |
+| listener | <code>POSConnector~connectedListener</code> &#124; <code>[barcodeScannedListener](#POSConnector..barcodeScannedListener)</code> | The listener function to remove |
 
 <a name="POSConnector.isConnected"></a>
 
