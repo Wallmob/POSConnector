@@ -125,7 +125,7 @@ Add an event listener
 | Param | Type | Description |
 | --- | --- | --- |
 | type | <code>POSConnector.EventType</code> | The type of event to listen for |
-| listener | <code>POSConnector~connectedListener</code> &#124; <code>[barcodeScannedListener](#POSConnector..barcodeScannedListener)</code> | The listener function to add |
+| listener | <code>[connectionEstablishedListener](#POSConnector..connectionEstablishedListener)</code> &#124; <code>[barcodeScannedListener](#POSConnector..barcodeScannedListener)</code> | The listener function to add |
 
 <a name="POSConnector.removeEventListener"></a>
 
@@ -136,7 +136,7 @@ Remove an event listener
 
 | Param | Type | Description |
 | --- | --- | --- |
-| listener | <code>POSConnector~connectedListener</code> &#124; <code>[barcodeScannedListener](#POSConnector..barcodeScannedListener)</code> | The listener function to remove |
+| listener | <code>[connectionEstablishedListener](#POSConnector..connectionEstablishedListener)</code> &#124; <code>[barcodeScannedListener](#POSConnector..barcodeScannedListener)</code> | The listener function to remove |
 
 <a name="POSConnector.isConnected"></a>
 

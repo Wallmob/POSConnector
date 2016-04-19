@@ -344,7 +344,7 @@ var POSConnector = (function () {
      * Add an event listener
      * @function POSConnector.addEventListener
      * @param {POSConnector.EventType} type - The type of event to listen for
-     * @param {POSConnector~connectedListener | POSConnector~barcodeScannedListener} listener - The listener function to add
+     * @param {POSConnector~connectionEstablishedListener | POSConnector~barcodeScannedListener} listener - The listener function to add
      */
     connector.addEventListener = function (type, listener) {
         var params = [type, listener];
@@ -355,7 +355,7 @@ var POSConnector = (function () {
     /**
      * Remove an event listener
      * @function POSConnector.removeEventListener
-     * @param {POSConnector~connectedListener | POSConnector~barcodeScannedListener} listener - The listener function to remove
+     * @param {POSConnector~connectionEstablishedListener | POSConnector~barcodeScannedListener} listener - The listener function to remove
      */
     connector.removeEventListener = function (listener) {
         console.log("removeEventListener: " + listener);
