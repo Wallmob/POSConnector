@@ -454,3 +454,7 @@ var POSConnector = (function () {
     return connector;
 
 }());
+
+if (typeof module === "object" && typeof module.exports === "object") {
+    module.exports = POSConnector;
+}
