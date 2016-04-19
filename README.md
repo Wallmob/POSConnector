@@ -23,11 +23,13 @@ Allows for communication with the native POS application.
         * [.isConnected()](#POSConnector.isConnected) ⇒ <code>boolean</code>
         * [.payBasket(basket, callback)](#POSConnector.payBasket)
         * [.getLoginInformation(callback)](#POSConnector.getLoginInformation)
+        * [.openURL(url, callback)](#POSConnector.openURL)
     * _inner_
         * [~connectionEstablishedListener](#POSConnector..connectionEstablishedListener) : <code>function</code>
         * [~barcodeScannedListener](#POSConnector..barcodeScannedListener) : <code>function</code>
         * [~payBasketCallback](#POSConnector..payBasketCallback) : <code>function</code>
         * [~getLoginInformationCallback](#POSConnector..getLoginInformationCallback) : <code>function</code>
+        * [~openURLCallback](#POSConnector..openURLCallback) : <code>function</code>
 
 <a name="POSConnector.LineItem"></a>
 
@@ -168,6 +170,18 @@ Get current login information from the native POS
 | --- | --- | --- |
 | callback | <code>[getLoginInformationCallback](#POSConnector..getLoginInformationCallback)</code> | Called when the operation concludes |
 
+<a name="POSConnector.openURL"></a>
+
+### POSConnector.openURL(url, callback)
+Request opening of a URL from the native application. The URL will open in which ever application the device prefers, typically Safari.
+
+**Kind**: static method of <code>[POSConnector](#POSConnector)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| url | <code>string</code> | The URL to open |
+| callback | <code>[openURLCallback](#POSConnector..openURLCallback)</code> | Called when the native application opened or rejected opening the URL |
+
 <a name="POSConnector..connectionEstablishedListener"></a>
 
 ### POSConnector~connectionEstablishedListener : <code>function</code>
@@ -207,5 +221,16 @@ Passed to the getLoginInformation function
 | Param | Type | Description |
 | --- | --- | --- |
 | [result] | <code>[LoginInformation](#POSConnector.LoginInformation)</code> | The requested login information if successful |
+| [error] | <code>string</code> | The error that occured if unsuccessful |
+
+<a name="POSConnector..openURLCallback"></a>
+
+### POSConnector~openURLCallback : <code>function</code>
+Passed to the openURL function
+
+**Kind**: inner typedef of <code>[POSConnector](#POSConnector)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
 | [error] | <code>string</code> | The error that occured if unsuccessful |
 

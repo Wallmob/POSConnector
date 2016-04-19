@@ -24,6 +24,12 @@
  */
 
 /**
+ * Passed to the openURL function
+ * @callback POSConnector~openURLCallback
+ * @param {string} [error] - The error that occured if unsuccessful
+ */
+
+/**
  * @class POSConnector
  * Allows for communication with the native POS application.
  */
@@ -47,7 +53,9 @@ var POSConnector = (function () {
         GetLoginInformationCallback: "GetLoginInformationCallback",
         PayBasket: "PayBasket",
         PayBasketCallback: "PayBasketCallback",
-        BarcodeScanned: "BarcodeScanned"
+        BarcodeScanned: "BarcodeScanned",
+        OpenURL: "OpenURL",
+        OpenURLCallback: "OpenURLCallback"
     };
 
     /**
@@ -60,7 +68,8 @@ var POSConnector = (function () {
         Error: "error",
         Success: "success",
         LoginInformation: "loginInformation",
-        Basket: "basket"
+        Basket: "basket",
+        URL: "url"
     };
 
     /**
@@ -199,6 +208,21 @@ var POSConnector = (function () {
     }
 
     /**
+     * Handle reception of a message named OpenURLCallback
+     * @private
+     * @function POSConnector~handleOpenURLCallbackMessage
+     * @param {POSConnector~Message} message - The message in question
+     */
+    function handleOpenURLCallbackMessage(message) {
+        var callback = callbackByDeletingCallbackWithId(message.callbackId);
+        if (!callback) {
+            return;
+        }
+        var error = message.body.error;
+        callback(error);
+    }
+
+    /**
      * Receive a message from the POS application. Never call this function.
      * @private
      * @function POSConnector.receiveMessage
@@ -218,6 +242,9 @@ var POSConnector = (function () {
             break;
         case MessageName.PayBasketCallback:
             handlePayBasketCallbackMessage(message);
+            break;
+        case MessageName.OpenURLCallback:
+            handleOpenURLCallbackMessage(message);
             break;
         default:
             console.log("Unknown message name: " + message.name);
@@ -406,6 +433,21 @@ var POSConnector = (function () {
             return;
         }
         var message = new Message(MessageName.GetLoginInformation, callback);
+        sendMessage(message);
+    };
+
+    /**
+     * Request opening of a URL from the native application. The URL will open in which ever application the device prefers, typically Safari.
+     * @function POSConnector.openURL
+     * @param {string} url - The URL to open
+     * @param {POSConnector~openURLCallback} callback - Called when the native application opened or rejected opening the URL
+     */
+    connector.openURL = function (url, callback) {
+        var params = [url, callback];
+        console.log("openURL: " + params.join(", "));
+        var messageBody = {};
+        messageBody[MessageBodyKey.URL] = url;
+        var message = new Message(MessageName.OpenURL, callback, messageBody);
         sendMessage(message);
     };
 
