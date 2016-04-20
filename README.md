@@ -24,12 +24,14 @@ Allows for communication with the native POS application.
         * [.payBasket(basket, callback)](#POSConnector.payBasket)
         * [.getLoginInformation(callback)](#POSConnector.getLoginInformation)
         * [.openURL(url, callback)](#POSConnector.openURL)
+        * [.printDocumentAtURL(url, callback)](#POSConnector.printDocumentAtURL)
     * _inner_
         * [~connectionEstablishedListener](#POSConnector..connectionEstablishedListener) : <code>function</code>
         * [~barcodeScannedListener](#POSConnector..barcodeScannedListener) : <code>function</code>
         * [~payBasketCallback](#POSConnector..payBasketCallback) : <code>function</code>
         * [~getLoginInformationCallback](#POSConnector..getLoginInformationCallback) : <code>function</code>
         * [~openURLCallback](#POSConnector..openURLCallback) : <code>function</code>
+        * [~printDocumentCallback](#POSConnector..printDocumentCallback) : <code>function</code>
 
 <a name="POSConnector.LineItem"></a>
 
@@ -182,6 +184,18 @@ Request opening of a URL from the native application. The URL will open in which
 | url | <code>string</code> | The URL to open |
 | callback | <code>[openURLCallback](#POSConnector..openURLCallback)</code> | Called when the native application opened or rejected opening the URL |
 
+<a name="POSConnector.printDocumentAtURL"></a>
+
+### POSConnector.printDocumentAtURL(url, callback)
+Request printing of a document located at a URL
+
+**Kind**: static method of <code>[POSConnector](#POSConnector)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| url | <code>string</code> | The URL pointing toward the document to print |
+| callback | <code>[printDocumentCallback](#POSConnector..printDocumentCallback)</code> | Called when the operation concludes |
+
 <a name="POSConnector..connectionEstablishedListener"></a>
 
 ### POSConnector~connectionEstablishedListener : <code>function</code>
@@ -208,7 +222,7 @@ Passed to the payBasket function
 
 | Param | Type | Description |
 | --- | --- | --- |
-| success | <code>boolean</code> | Whether or not the payment was completed |
+| result | <code>boolean</code> | Whether or not the payment was completed |
 | [error] | <code>string</code> | Optional string describing what went wrong |
 
 <a name="POSConnector..getLoginInformationCallback"></a>
@@ -233,4 +247,16 @@ Passed to the openURL function
 | Param | Type | Description |
 | --- | --- | --- |
 | [error] | <code>string</code> | The error that occured if unsuccessful |
+
+<a name="POSConnector..printDocumentCallback"></a>
+
+### POSConnector~printDocumentCallback : <code>function</code>
+Passed to the printDocumentAtURL and printDocumentData functions
+
+**Kind**: inner typedef of <code>[POSConnector](#POSConnector)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| result | <code>boolean</code> | Whether or not the printing job was completed |
+| [error] | <code>string</code> | The error that occured if printing wasn't just cancelled by the user |
 

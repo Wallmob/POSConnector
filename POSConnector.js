@@ -12,7 +12,7 @@
 /**
  * Passed to the payBasket function
  * @callback POSConnector~payBasketCallback
- * @param {boolean} success - Whether or not the payment was completed
+ * @param {boolean} result - Whether or not the payment was completed
  * @param {string} [error] - Optional string describing what went wrong
  */
 
@@ -27,6 +27,13 @@
  * Passed to the openURL function
  * @callback POSConnector~openURLCallback
  * @param {string} [error] - The error that occured if unsuccessful
+ */
+
+/**
+ * Passed to the printDocumentAtURL and printDocumentData functions
+ * @callback POSConnector~printDocumentCallback
+ * @param {boolean} result - Whether or not the printing job was completed
+ * @param {string} [error] - The error that occured if printing wasn't just cancelled by the user
  */
 
 /**
@@ -55,7 +62,9 @@ var POSConnector = (function () {
         PayBasketCallback: "PayBasketCallback",
         BarcodeScanned: "BarcodeScanned",
         OpenURL: "OpenURL",
-        OpenURLCallback: "OpenURLCallback"
+        OpenURLCallback: "OpenURLCallback",
+        PrintDocumentAtURL: "PrintDocumentAtURL",
+        PrintDocumentCallback: "PrintDocumentCallback"
     };
 
     /**
@@ -66,7 +75,6 @@ var POSConnector = (function () {
     var MessageBodyKey = {
         Result: "result",
         Error: "error",
-        Success: "success",
         LoginInformation: "loginInformation",
         Basket: "basket",
         URL: "url"
@@ -148,6 +156,37 @@ var POSConnector = (function () {
     }
 
     /**
+     * Common message reception handler for callbacks with {boolean} success and {string} [error] parameters
+     * @private
+     * @function POSConnector~handleCallbackMessageWithParametersSuccessAndOptionalError
+     * @param {POSConnector~Message} message - The message in question
+     */
+    function handleCallbackMessageWithParametersResultAndError(message) {
+        var callback = callbackByDeletingCallbackWithId(message.callbackId);
+        if (!callback) {
+            return;
+        }
+        var result = message.body.result;
+        var error = message.body.error;
+        callback(result, error);
+    }
+
+    /**
+     * Common message reception handler for callbacks with {string} [error] parameter
+     * @private
+     * @function POSConnector~handleCallbackMessageWithParameterOptionalError
+     * @param {POSConnector~Message} message - The message in question
+     */
+    function handleCallbackMessageWithParameterError(message) {
+        var callback = callbackByDeletingCallbackWithId(message.callbackId);
+        if (!callback) {
+            return;
+        }
+        var error = message.body.error;
+        callback(error);
+    }
+
+    /**
      * Handle reception of a message named ConnectionEstablished
      * @private
      * @function POSConnector~handleConnectionEstablishedMessage
@@ -176,53 +215,6 @@ var POSConnector = (function () {
     }
 
     /**
-     * Handle reception of a message named GetLoginInformationCallback
-     * @private
-     * @function POSConnector~handleGetLoginInformationCallbackMessage
-     * @param {POSConnector~Message} message - The message in question
-     */
-    function handleGetLoginInformationCallbackMessage(message) {
-        var callback = callbackByDeletingCallbackWithId(message.callbackId);
-        if (!callback) {
-            return;
-        }
-        var loginInformation = message.body.result;
-        var error = message.body.error;
-        callback(loginInformation, error);
-    }
-
-    /**
-     * Handle reception of a message named PayBasketCallback
-     * @private
-     * @function POSConnector~handlePayBasketCallbackMessage
-     * @param {POSConnector~Message} message - The message in question
-     */
-    function handlePayBasketCallbackMessage(message) {
-        var callback = callbackByDeletingCallbackWithId(message.callbackId);
-        if (!callback) {
-            return;
-        }
-        var success = message.body.success;
-        var error = message.body.error;
-        callback(success, error);
-    }
-
-    /**
-     * Handle reception of a message named OpenURLCallback
-     * @private
-     * @function POSConnector~handleOpenURLCallbackMessage
-     * @param {POSConnector~Message} message - The message in question
-     */
-    function handleOpenURLCallbackMessage(message) {
-        var callback = callbackByDeletingCallbackWithId(message.callbackId);
-        if (!callback) {
-            return;
-        }
-        var error = message.body.error;
-        callback(error);
-    }
-
-    /**
      * Receive a message from the POS application. Never call this function.
      * @private
      * @function POSConnector.receiveMessage
@@ -238,13 +230,16 @@ var POSConnector = (function () {
             handleBarcodeScannedMessage(message);
             break;
         case MessageName.GetLoginInformationCallback:
-            handleGetLoginInformationCallbackMessage(message);
+            handleCallbackMessageWithParametersResultAndError(message);
             break;
         case MessageName.PayBasketCallback:
-            handlePayBasketCallbackMessage(message);
+            handleCallbackMessageWithParametersResultAndError(message);
             break;
         case MessageName.OpenURLCallback:
-            handleOpenURLCallbackMessage(message);
+            handleCallbackMessageWithParameterError(message);
+            break;
+        case MessageName.PrintDocumentCallback:
+            handleCallbackMessageWithParametersResultAndError(message);
             break;
         default:
             console.log("Unknown message name: " + message.name);
@@ -448,6 +443,21 @@ var POSConnector = (function () {
         var messageBody = {};
         messageBody[MessageBodyKey.URL] = url;
         var message = new Message(MessageName.OpenURL, callback, messageBody);
+        sendMessage(message);
+    };
+
+    /**
+     * Request printing of a document located at a URL
+     * @function POSConnector.printDocumentAtURL
+     * @param {string} url - The URL pointing toward the document to print
+     * @param {POSConnector~printDocumentCallback} callback - Called when the operation concludes
+     */
+    connector.printDocumentAtURL = function (url, callback) {
+        var params = [url, callback];
+        console.log("printDocumentAtURL: " + params.join(", "));
+        var messageBody = {};
+        messageBody[MessageBodyKey.URL] = url;
+        var message = new Message(MessageName.PrintDocumentAtURL, callback, messageBody);
         sendMessage(message);
     };
 
