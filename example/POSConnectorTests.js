@@ -8,11 +8,9 @@ var POSConnectorTests = (function () {
     }
 
     if (POSConnector.isConnected()) {
-        console.log("Already connected");
+        console.log("Connected");
     } else {
-        POSConnector.addEventListener(POSConnector.EventType.ConnectionEstablished, function () {
-            console.log("Connected By Event");
-        });
+        return;
     }
 
     var tests = {};
@@ -87,10 +85,6 @@ var POSConnectorTests = (function () {
 
     POSConnector.addEventListener(POSConnector.EventType.BarcodeScanned, function (barcode) {
         console.log("Barcode scanned: " + barcode);
-    });
-
-    POSConnector.addEventListener(POSConnector.EventType.ConnectionEstablished, function () {
-        console.log("Connection established");
     });
 
     return tests;
