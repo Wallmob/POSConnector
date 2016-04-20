@@ -64,6 +64,7 @@ var POSConnector = (function () {
         OpenURL: "OpenURL",
         OpenURLCallback: "OpenURLCallback",
         PrintDocumentAtURL: "PrintDocumentAtURL",
+        PrintDocumentWithData: "PrintDocumentWithData",
         PrintDocumentCallback: "PrintDocumentCallback"
     };
 
@@ -75,9 +76,9 @@ var POSConnector = (function () {
     var MessageBodyKey = {
         Result: "result",
         Error: "error",
-        LoginInformation: "loginInformation",
         Basket: "basket",
-        URL: "url"
+        URL: "url",
+        Data: "data"
     };
 
     /**
@@ -151,7 +152,6 @@ var POSConnector = (function () {
      * @param {POSConnector~Message} message - The message to send
      */
     function sendMessage(message) {
-        console.log("sendMessage: " + message);
         window.webkit.messageHandlers.POS.postMessage(message);
     }
 
@@ -221,7 +221,6 @@ var POSConnector = (function () {
      * @param {POSConnector~Message} message - The received message
      */
     connector.receiveMessage = function (message) {
-        console.log("receiveMessage: " + message);
         switch (message.name) {
         case MessageName.ConnectionEstablished:
             handleConnectionEstablishedMessage();
@@ -241,8 +240,6 @@ var POSConnector = (function () {
         case MessageName.PrintDocumentCallback:
             handleCallbackMessageWithParametersResultAndError(message);
             break;
-        default:
-            console.log("Unknown message name: " + message.name);
         }
     };
 
@@ -369,8 +366,6 @@ var POSConnector = (function () {
      * @param {POSConnector~connectionEstablishedListener | POSConnector~barcodeScannedListener} listener - The listener function to add
      */
     connector.addEventListener = function (type, listener) {
-        var params = [type, listener];
-        console.log("addEventListener: " + params.join(", "));
         listenerObjects.push(new Listener(type, listener));
     };
 
@@ -380,7 +375,6 @@ var POSConnector = (function () {
      * @param {POSConnector~connectionEstablishedListener | POSConnector~barcodeScannedListener} listener - The listener function to remove
      */
     connector.removeEventListener = function (listener) {
-        console.log("removeEventListener: " + listener);
         listenerObjects.forEach(function (listenerObject, index) {
             if (listenerObject.listenerCallback === listener) {
                 listenerObjects.splice(index, 1);
@@ -404,8 +398,6 @@ var POSConnector = (function () {
      * @param {POSConnector~payBasketCallback} callback - Called when the operation concludes
      */
     connector.payBasket = function (basket, callback) {
-        var params = [basket, callback];
-        console.log("payBasket: " + params.join(", "));
         if (!connector.isConnected()) {
             callback(false, Error.NotConnected);
             return;
@@ -422,7 +414,6 @@ var POSConnector = (function () {
      * @param {POSConnector~getLoginInformationCallback} callback - Called when the operation concludes
      */
     connector.getLoginInformation = function (callback) {
-        console.log("getLoginInformation: " + callback);
         if (!connector.isConnected()) {
             callback(null, Error.NotConnected);
             return;
@@ -438,8 +429,6 @@ var POSConnector = (function () {
      * @param {POSConnector~openURLCallback} callback - Called when the native application opened or rejected opening the URL
      */
     connector.openURL = function (url, callback) {
-        var params = [url, callback];
-        console.log("openURL: " + params.join(", "));
         var messageBody = {};
         messageBody[MessageBodyKey.URL] = url;
         var message = new Message(MessageName.OpenURL, callback, messageBody);
@@ -453,12 +442,33 @@ var POSConnector = (function () {
      * @param {POSConnector~printDocumentCallback} callback - Called when the operation concludes
      */
     connector.printDocumentAtURL = function (url, callback) {
-        var params = [url, callback];
-        console.log("printDocumentAtURL: " + params.join(", "));
         var messageBody = {};
         messageBody[MessageBodyKey.URL] = url;
         var message = new Message(MessageName.PrintDocumentAtURL, callback, messageBody);
         sendMessage(message);
+    };
+
+    /**
+     * Requests printing of a document with a data object
+     * @function POSConnector.printDocumentWithData
+     * @param {Blob} data - Data object
+     * @param {POSConnector~printDocumentCallback} callback - Called when the operation concludes
+     */
+    connector.printDocumentWithData = function (data, callback) {
+        if (FileReader === undefined || Blob === undefined) {
+            callback(false, "The required Blob and/or FileReader functionality isn't available in this Javascript environment.");
+            return;
+        }
+        var fileReader = new FileReader();
+        fileReader.onload = function () {
+            var dataAsURL = fileReader.result;
+            var base64String = dataAsURL.substr(dataAsURL.indexOf(',') + 1);
+            var messageBody = {};
+            messageBody[MessageBodyKey.Data] = base64String;
+            var message = new Message(MessageName.PrintDocumentWithData, callback, messageBody);
+            sendMessage(message);
+        };
+        fileReader.readAsDataURL(data);
     };
 
     return connector;

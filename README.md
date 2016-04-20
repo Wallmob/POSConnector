@@ -25,6 +25,7 @@ Allows for communication with the native POS application.
         * [.getLoginInformation(callback)](#POSConnector.getLoginInformation)
         * [.openURL(url, callback)](#POSConnector.openURL)
         * [.printDocumentAtURL(url, callback)](#POSConnector.printDocumentAtURL)
+        * [.printDocumentWithData(data, callback)](#POSConnector.printDocumentWithData)
     * _inner_
         * [~connectionEstablishedListener](#POSConnector..connectionEstablishedListener) : <code>function</code>
         * [~barcodeScannedListener](#POSConnector..barcodeScannedListener) : <code>function</code>
@@ -194,6 +195,18 @@ Request printing of a document located at a URL
 | Param | Type | Description |
 | --- | --- | --- |
 | url | <code>string</code> | The URL pointing toward the document to print |
+| callback | <code>[printDocumentCallback](#POSConnector..printDocumentCallback)</code> | Called when the operation concludes |
+
+<a name="POSConnector.printDocumentWithData"></a>
+
+### POSConnector.printDocumentWithData(data, callback)
+Requests printing of a document with a data object
+
+**Kind**: static method of <code>[POSConnector](#POSConnector)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| data | <code>Blob</code> | Data object |
 | callback | <code>[printDocumentCallback](#POSConnector..printDocumentCallback)</code> | Called when the operation concludes |
 
 <a name="POSConnector..connectionEstablishedListener"></a>
