@@ -1,10 +1,5 @@
 /**
- * Passed to POSConnector.on for EventType.Connected
- * @callback POSConnector~connectionEstablishedListener
- */
-
-/**
- * Passed to POSConnector.on for EventType.BarcodeScanned
+ * Passed to POSConnector.addEventListener for EventType.BarcodeScanned
  * @callback POSConnector~barcodeScannedListener
  * @param {string} barcode - The barcode that was scanned
  */
@@ -55,7 +50,6 @@ var POSConnector = (function () {
      * @enum {string} POSConnector~MessageName
      */
     var MessageName = {
-        ConnectionEstablished: "ConnectionEstablished",
         GetLoginInformation: "GetLoginInformation",
         GetLoginInformationCallback: "GetLoginInformationCallback",
         PayBasket: "PayBasket",
@@ -95,7 +89,7 @@ var POSConnector = (function () {
      * @private
      * @class POSConnector~Listener
      * @param {POSConnector~EventType} type - The event that the listener observes
-     * @param {POSConnector~connectionEstablishedListener | POSConnector~barcodeScannedListener} listenerCallback - The callback function
+     * @param {POSConnector~barcodeScannedListener} listenerCallback - The callback function
      */
     function Listener(type, listenerCallback) {
         var listener = {};
@@ -187,19 +181,6 @@ var POSConnector = (function () {
     }
 
     /**
-     * Handle reception of a message named ConnectionEstablished
-     * @private
-     * @function POSConnector~handleConnectionEstablishedMessage
-     */
-    function handleConnectionEstablishedMessage() {
-        listenerObjects.forEach(function (listenerObject) {
-            if (listenerObject.type === connector.EventType.ConnectionEstablished) {
-                listenerObject.listenerCallback();
-            }
-        });
-    }
-
-    /**
      * Handle reception of a message named BarcodeScanned
      * @private
      * @function POSConnector~handleBarcodeScannedMessage
@@ -222,9 +203,6 @@ var POSConnector = (function () {
      */
     connector.receiveMessage = function (message) {
         switch (message.name) {
-        case MessageName.ConnectionEstablished:
-            handleConnectionEstablishedMessage();
-            break;
         case MessageName.BarcodeScanned:
             handleBarcodeScannedMessage(message);
             break;
@@ -355,7 +333,6 @@ var POSConnector = (function () {
      * @enum {string} POSConnector.EventType
      */
     connector.EventType = {
-        ConnectionEstablished: "ConnectionEstablished",
         BarcodeScanned: "BarcodeScanned"
     };
 
@@ -363,7 +340,7 @@ var POSConnector = (function () {
      * Add an event listener
      * @function POSConnector.addEventListener
      * @param {POSConnector.EventType} type - The type of event to listen for
-     * @param {POSConnector~connectionEstablishedListener | POSConnector~barcodeScannedListener} listener - The listener function to add
+     * @param {POSConnector~barcodeScannedListener} listener - The listener function to add
      */
     connector.addEventListener = function (type, listener) {
         listenerObjects.push(new Listener(type, listener));
@@ -372,7 +349,7 @@ var POSConnector = (function () {
     /**
      * Remove an event listener
      * @function POSConnector.removeEventListener
-     * @param {POSConnector~connectionEstablishedListener | POSConnector~barcodeScannedListener} listener - The listener function to remove
+     * @param {POSConnector~barcodeScannedListener} listener - The listener function to remove
      */
     connector.removeEventListener = function (listener) {
         listenerObjects.forEach(function (listenerObject, index) {

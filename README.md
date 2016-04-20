@@ -27,7 +27,6 @@ Allows for communication with the native POS application.
         * [.printDocumentAtURL(url, callback)](#POSConnector.printDocumentAtURL)
         * [.printDocumentWithData(data, callback)](#POSConnector.printDocumentWithData)
     * _inner_
-        * [~connectionEstablishedListener](#POSConnector..connectionEstablishedListener) : <code>function</code>
         * [~barcodeScannedListener](#POSConnector..barcodeScannedListener) : <code>function</code>
         * [~payBasketCallback](#POSConnector..payBasketCallback) : <code>function</code>
         * [~getLoginInformationCallback](#POSConnector..getLoginInformationCallback) : <code>function</code>
@@ -130,7 +129,7 @@ Add an event listener
 | Param | Type | Description |
 | --- | --- | --- |
 | type | <code>POSConnector.EventType</code> | The type of event to listen for |
-| listener | <code>[connectionEstablishedListener](#POSConnector..connectionEstablishedListener)</code> &#124; <code>[barcodeScannedListener](#POSConnector..barcodeScannedListener)</code> | The listener function to add |
+| listener | <code>[barcodeScannedListener](#POSConnector..barcodeScannedListener)</code> | The listener function to add |
 
 <a name="POSConnector.removeEventListener"></a>
 
@@ -141,7 +140,7 @@ Remove an event listener
 
 | Param | Type | Description |
 | --- | --- | --- |
-| listener | <code>[connectionEstablishedListener](#POSConnector..connectionEstablishedListener)</code> &#124; <code>[barcodeScannedListener](#POSConnector..barcodeScannedListener)</code> | The listener function to remove |
+| listener | <code>[barcodeScannedListener](#POSConnector..barcodeScannedListener)</code> | The listener function to remove |
 
 <a name="POSConnector.isConnected"></a>
 
@@ -209,16 +208,10 @@ Requests printing of a document with a data object
 | data | <code>Blob</code> | Data object |
 | callback | <code>[printDocumentCallback](#POSConnector..printDocumentCallback)</code> | Called when the operation concludes |
 
-<a name="POSConnector..connectionEstablishedListener"></a>
-
-### POSConnector~connectionEstablishedListener : <code>function</code>
-Passed to POSConnector.on for EventType.Connected
-
-**Kind**: inner typedef of <code>[POSConnector](#POSConnector)</code>  
 <a name="POSConnector..barcodeScannedListener"></a>
 
 ### POSConnector~barcodeScannedListener : <code>function</code>
-Passed to POSConnector.on for EventType.BarcodeScanned
+Passed to POSConnector.addEventListener for EventType.BarcodeScanned
 
 **Kind**: inner typedef of <code>[POSConnector](#POSConnector)</code>  
 

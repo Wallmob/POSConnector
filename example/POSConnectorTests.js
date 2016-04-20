@@ -2,12 +2,20 @@ var POSConnectorTests = (function () {
 
     "use_strict";
 
-    var tests = {};
-
     if (POSConnector === undefined) {
         console.log("POSConnector is required for the example to run");
         return;
     }
+
+    if (POSConnector.isConnected()) {
+        console.log("Already connected");
+    } else {
+        POSConnector.addEventListener(POSConnector.EventType.ConnectionEstablished, function () {
+            console.log("Connected By Event");
+        });
+    }
+
+    var tests = {};
 
     tests.TestPayBasket = function () {
         var lineItem1 = new POSConnector.LineItem("Apple Lightning Cable", 2, 99.95, 0.25, 0);
