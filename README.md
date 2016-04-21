@@ -33,7 +33,7 @@ Allows for communication with the native POS application.
         * [~getLoginInformationCallback](#POSConnector..getLoginInformationCallback) : <code>function</code>
         * [~openURLCallback](#POSConnector..openURLCallback) : <code>function</code>
         * [~printDocumentCallback](#POSConnector..printDocumentCallback) : <code>function</code>
-        * [~sendCustomPOSConnectorObjectPathToPOSCallback](#POSConnector..sendCustomPOSConnectorObjectPathToPOSCallback) : <code>function</code>
+        * [~sendPOSConnectorObjectPathToPOSCallback](#POSConnector..sendPOSConnectorObjectPathToPOSCallback) : <code>function</code>
 
 <a name="POSConnector.LineItem"></a>
 
@@ -222,7 +222,7 @@ on having the POSConnector object with that specific variable name in the global
 | Param | Type | Description |
 | --- | --- | --- |
 | objectPath | <code>string</code> | Path the the POSConnector object (ie. "Vendor.Wallmob.POSLink") |
-| [callback] | <code>[sendCustomPOSConnectorObjectPathToPOSCallback](#POSConnector..sendCustomPOSConnectorObjectPathToPOSCallback)</code> | Called when the operation concludes. |
+| [callback] | <code>[sendPOSConnectorObjectPathToPOSCallback](#POSConnector..sendPOSConnectorObjectPathToPOSCallback)</code> | Called when the operation concludes. |
 
 <a name="POSConnector..barcodeScannedListener"></a>
 
@@ -282,9 +282,9 @@ Passed to the printDocumentAtURL and printDocumentData functions
 | result | <code>boolean</code> | Whether or not the printing job was completed |
 | [error] | <code>string</code> | The error that occured if printing wasn't just cancelled by the user |
 
-<a name="POSConnector..sendCustomPOSConnectorObjectPathToPOSCallback"></a>
+<a name="POSConnector..sendPOSConnectorObjectPathToPOSCallback"></a>
 
-### POSConnector~sendCustomPOSConnectorObjectPathToPOSCallback : <code>function</code>
+### POSConnector~sendPOSConnectorObjectPathToPOSCallback : <code>function</code>
 Passed to the sendPOSConnectorObjectPathToPOS function
 
 **Kind**: inner typedef of <code>[POSConnector](#POSConnector)</code>  

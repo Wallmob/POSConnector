@@ -33,7 +33,7 @@
 
 /**
  * Passed to the sendPOSConnectorObjectPathToPOS function
- * @callback POSConnector~sendCustomPOSConnectorObjectPathToPOSCallback
+ * @callback POSConnector~sendPOSConnectorObjectPathToPOSCallback
  * @param {string} [error] - The error that occured if unsuccessful
  */
 
@@ -466,7 +466,7 @@ var POSConnector = (function () {
      * on having the POSConnector object with that specific variable name in the global scope.
      * @function POSConnector.sendPOSConnectorObjectPathToPOS
      * @param {string} objectPath - Path the the POSConnector object (ie. "Vendor.Wallmob.POSLink")
-     * @param {POSConnector~sendCustomPOSConnectorObjectPathToPOSCallback} [callback] - Called when the operation concludes.
+     * @param {POSConnector~sendPOSConnectorObjectPathToPOSCallback} [callback] - Called when the operation concludes.
      */
     connector.sendPOSConnectorObjectPathToPOS = function (objectPath, callback) {
         var objectPathComponents = objectPath.split(".");
