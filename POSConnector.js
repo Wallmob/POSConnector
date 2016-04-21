@@ -436,16 +436,23 @@ var POSConnector = (function () {
             callback(false, "The required Blob and/or FileReader functionality isn't available in this Javascript environment.");
             return;
         }
-        var fileReader = new FileReader();
-        fileReader.onload = function () {
-            var dataAsURL = fileReader.result;
+        var sendData = function (dataAsURL) {
             var base64String = dataAsURL.substr(dataAsURL.indexOf(',') + 1);
             var messageBody = {};
             messageBody[MessageBodyKey.Data] = base64String;
             var message = new Message(MessageName.PrintDocumentWithData, callback, messageBody);
             sendMessage(message);
         };
-        fileReader.readAsDataURL(data);
+
+        if (data.type) {
+            var fileReader = new FileReader();
+            fileReader.onload = function () {
+                sendData(fileReader.result);
+            };
+            fileReader.readAsDataURL(data);
+        } else {
+            sendData(data);
+        }
     };
 
     return connector;
