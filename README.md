@@ -1,8 +1,7 @@
 <a name="POSConnector"></a>
 
 ## POSConnector
-POSConnector
-Allows for communication with the native POS application.
+POSConnectorAllows for communication with the native POS application.
 
 **Kind**: global class  
 
@@ -205,7 +204,7 @@ Requests printing of a document with a data object
 
 | Param | Type | Description |
 | --- | --- | --- |
-| data | <code>Blob</code> | Data object |
+| data | <code>Blob</code> &#124; <code>String</code> | Data object |
 | callback | <code>[printDocumentCallback](#POSConnector..printDocumentCallback)</code> | Called when the operation concludes |
 
 <a name="POSConnector..barcodeScannedListener"></a>
