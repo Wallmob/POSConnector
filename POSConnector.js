@@ -428,7 +428,7 @@ var POSConnector = (function () {
     /**
      * Requests printing of a document with a data object
      * @function POSConnector.printDocumentWithData
-     * @param {Blob} data - Data object
+     * @param {Blob|String} data - Data object
      * @param {POSConnector~printDocumentCallback} callback - Called when the operation concludes
      */
     connector.printDocumentWithData = function (data, callback) {
