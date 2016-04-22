@@ -212,9 +212,7 @@ Requests printing of a document with a data object
 <a name="POSConnector.sendPOSConnectorObjectPathToPOS"></a>
 
 ### POSConnector.sendPOSConnectorObjectPathToPOS(objectPath, [callback])
-Send an object path for the POSConnector to the native POS application.
-You'd do this if you're utilizing modules or similar and you don't want to depend
-on having the POSConnector object with that specific variable name in the global scope.
+Send an object path for the POSConnector to the native POS application.You'd do this if you're utilizing modules or similar and you don't want to dependon having the POSConnector object with that specific variable name in the global scope.
 
 **Kind**: static method of <code>[POSConnector](#POSConnector)</code>  
 
