@@ -25,12 +25,14 @@ POSConnectorAllows for communication with the native POS application.
         * [.openURL(url, callback)](#POSConnector.openURL)
         * [.printDocumentAtURL(url, callback)](#POSConnector.printDocumentAtURL)
         * [.printDocumentWithData(data, callback)](#POSConnector.printDocumentWithData)
+        * [.sendPOSConnectorObjectPathToPOS(objectPath, [callback])](#POSConnector.sendPOSConnectorObjectPathToPOS)
     * _inner_
         * [~barcodeScannedListener](#POSConnector..barcodeScannedListener) : <code>function</code>
         * [~payBasketCallback](#POSConnector..payBasketCallback) : <code>function</code>
         * [~getLoginInformationCallback](#POSConnector..getLoginInformationCallback) : <code>function</code>
         * [~openURLCallback](#POSConnector..openURLCallback) : <code>function</code>
         * [~printDocumentCallback](#POSConnector..printDocumentCallback) : <code>function</code>
+        * [~sendPOSConnectorObjectPathToPOSCallback](#POSConnector..sendPOSConnectorObjectPathToPOSCallback) : <code>function</code>
 
 <a name="POSConnector.LineItem"></a>
 
@@ -207,6 +209,20 @@ Requests printing of a document with a data object
 | data | <code>Blob</code> &#124; <code>String</code> | Data object |
 | callback | <code>[printDocumentCallback](#POSConnector..printDocumentCallback)</code> | Called when the operation concludes |
 
+<a name="POSConnector.sendPOSConnectorObjectPathToPOS"></a>
+
+### POSConnector.sendPOSConnectorObjectPathToPOS(objectPath, [callback])
+Send an object path for the POSConnector to the native POS application.
+You'd do this if you're utilizing modules or similar and you don't want to depend
+on having the POSConnector object with that specific variable name in the global scope.
+
+**Kind**: static method of <code>[POSConnector](#POSConnector)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| objectPath | <code>string</code> | Path the the POSConnector object (ie. "Vendor.Wallmob.POSLink") |
+| [callback] | <code>[sendPOSConnectorObjectPathToPOSCallback](#POSConnector..sendPOSConnectorObjectPathToPOSCallback)</code> | Called when the operation concludes. |
+
 <a name="POSConnector..barcodeScannedListener"></a>
 
 ### POSConnector~barcodeScannedListener : <code>function</code>
@@ -264,4 +280,15 @@ Passed to the printDocumentAtURL and printDocumentData functions
 | --- | --- | --- |
 | result | <code>boolean</code> | Whether or not the printing job was completed |
 | [error] | <code>string</code> | The error that occured if printing wasn't just cancelled by the user |
+
+<a name="POSConnector..sendPOSConnectorObjectPathToPOSCallback"></a>
+
+### POSConnector~sendPOSConnectorObjectPathToPOSCallback : <code>function</code>
+Passed to the sendPOSConnectorObjectPathToPOS function
+
+**Kind**: inner typedef of <code>[POSConnector](#POSConnector)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [error] | <code>string</code> | The error that occured if unsuccessful |
 

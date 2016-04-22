@@ -2,28 +2,25 @@ var POSConnectorTests = (function () {
 
     "use_strict";
 
-    if (POSConnector === undefined) {
-        console.log("POSConnector is required for the example to run");
-        return;
-    }
-
-    if (POSConnector.isConnected()) {
-        console.log("Connected");
-    } else {
-        return;
-    }
-
     var tests = {};
 
+    tests.POSConnector = POSConnector;
+
+    if (tests.POSConnector.isConnected()) {
+        console.log("Connected");
+    } else {
+        console.log("")
+    }
+
     tests.TestPayBasket = function () {
-        var lineItem1 = new POSConnector.LineItem("Apple Lightning Cable", 2, 99.95, 0.25, 0);
-        var lineItem2Discount = new POSConnector.Discount("VIP Discount", null, 0.1);
-        var lineItem2 = new POSConnector.LineItem("Apple iPad Pro", 1, 4995, 0.25, 0, null, null, [lineItem2Discount]);
-        var discount = new POSConnector.Discount("Member Campaign Discount", 100);
-        var transaction = new POSConnector.Transaction(POSConnector.TransactionType.Installment, 4000);
+        var lineItem1 = new tests.POSConnector.LineItem("Apple Lightning Cable", 2, 99.95, 0.25, 0);
+        var lineItem2Discount = new tests.POSConnector.Discount("VIP Discount", null, 0.1);
+        var lineItem2 = new tests.POSConnector.LineItem("Apple iPad Pro", 1, 4995, 0.25, 0, null, null, [lineItem2Discount]);
+        var discount = new tests.POSConnector.Discount("Member Campaign Discount", 100);
+        var transaction = new tests.POSConnector.Transaction(tests.POSConnector.TransactionType.Installment, 4000);
         var dummyId = Math.random().toString();
-        var basket = new POSConnector.Basket(dummyId, [lineItem1, lineItem2], [transaction], [discount]);
-        POSConnector.payBasket(basket, function (result, error) {
+        var basket = new tests.POSConnector.Basket(dummyId, [lineItem1, lineItem2], [transaction], [discount]);
+        tests.POSConnector.payBasket(basket, function (result, error) {
             console.log("PayBasketCallback: " + result);
             console.log("ID: " + dummyId);
             if (error) {
@@ -33,7 +30,7 @@ var POSConnectorTests = (function () {
     };
 
     tests.TestGetLoginInformation = function () {
-        POSConnector.getLoginInformation(function (result, error) {
+        tests.POSConnector.getLoginInformation(function (result, error) {
             console.log("GetLoginInformationCallback");
             if (result) {
                 console.log("Shop id: " + result.shopId);
@@ -50,7 +47,7 @@ var POSConnectorTests = (function () {
     };
 
     tests.TestOpenURL = function (url) {
-        POSConnector.openURL(url, function (error) {
+        tests.POSConnector.openURL(url, function (error) {
             console.log("OpenURLCallback");
             if (error) {
                 console.log("Error: " + error);
@@ -59,7 +56,7 @@ var POSConnectorTests = (function () {
     };
 
     tests.TestPrintDocumentAtURL = function (url) {
-        POSConnector.printDocumentAtURL(url, function (result, error) {
+        tests.POSConnector.printDocumentAtURL(url, function (result, error) {
             console.log("PrintDocumentAtURLCallback: " + result);
             if (error) {
                 console.log("Error: " + error);
@@ -73,7 +70,7 @@ var POSConnectorTests = (function () {
         request.responseType = "blob";
         request.onload = function () {
             var data = request.response;
-            POSConnector.printDocumentWithData(data, function (result, error) {
+            tests.POSConnector.printDocumentWithData(data, function (result, error) {
                 console.log("PrintDocumentWithDataCallback: " + result);
                 if (error) {
                     console.log("Error: " + error);
@@ -92,7 +89,7 @@ var POSConnectorTests = (function () {
         });
     };
 
-    POSConnector.addEventListener(POSConnector.EventType.BarcodeScanned, function (barcode) {
+    tests.POSConnector.addEventListener(tests.POSConnector.EventType.BarcodeScanned, function (barcode) {
         console.log("Barcode scanned: " + barcode);
     });
 
