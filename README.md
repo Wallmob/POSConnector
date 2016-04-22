@@ -1,8 +1,7 @@
 <a name="POSConnector"></a>
 
 ## POSConnector
-POSConnector
-Allows for communication with the native POS application.
+POSConnectorAllows for communication with the native POS application.
 
 **Kind**: global class  
 
@@ -207,15 +206,13 @@ Requests printing of a document with a data object
 
 | Param | Type | Description |
 | --- | --- | --- |
-| data | <code>Blob</code> | Data object |
+| data | <code>Blob</code> &#124; <code>String</code> | Data object |
 | callback | <code>[printDocumentCallback](#POSConnector..printDocumentCallback)</code> | Called when the operation concludes |
 
 <a name="POSConnector.sendPOSConnectorObjectPathToPOS"></a>
 
 ### POSConnector.sendPOSConnectorObjectPathToPOS(objectPath, [callback])
-Send an object path for the POSConnector to the native POS application.
-You'd do this if you're utilizing modules or similar and you don't want to depend
-on having the POSConnector object with that specific variable name in the global scope.
+Send an object path for the POSConnector to the native POS application.You'd do this if you're utilizing modules or similar and you don't want to dependon having the POSConnector object with that specific variable name in the global scope.
 
 **Kind**: static method of <code>[POSConnector](#POSConnector)</code>  
 
