@@ -1,7 +1,8 @@
 <a name="POSConnector"></a>
 
 ## POSConnector
-POSConnectorAllows for communication with the native POS application.
+POSConnector
+Allows for communication with the native POS application.
 
 **Kind**: global class  
 
@@ -24,7 +25,7 @@ POSConnectorAllows for communication with the native POS application.
         * [.getLoginInformation(callback)](#POSConnector.getLoginInformation)
         * [.openURL(url, callback)](#POSConnector.openURL)
         * [.printDocumentAtURL(url, callback)](#POSConnector.printDocumentAtURL)
-        * [.printDocumentWithData(data, callback)](#POSConnector.printDocumentWithData)
+        * [.printDocumentWithData(data, [callback])](#POSConnector.printDocumentWithData)
         * [.sendPOSConnectorObjectPathToPOS(objectPath, [callback])](#POSConnector.sendPOSConnectorObjectPathToPOS)
     * _inner_
         * [~barcodeScannedListener](#POSConnector..barcodeScannedListener) : <code>function</code>
@@ -199,20 +200,22 @@ Request printing of a document located at a URL
 
 <a name="POSConnector.printDocumentWithData"></a>
 
-### POSConnector.printDocumentWithData(data, callback)
+### POSConnector.printDocumentWithData(data, [callback])
 Requests printing of a document with a data object
 
 **Kind**: static method of <code>[POSConnector](#POSConnector)</code>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| data | <code>Blob</code> &#124; <code>String</code> | Data object |
-| callback | <code>[printDocumentCallback](#POSConnector..printDocumentCallback)</code> | Called when the operation concludes |
+| data | <code>Blob</code> &#124; <code>string</code> | The document data either contained in a Blob object or a base64 string |
+| [callback] | <code>[printDocumentCallback](#POSConnector..printDocumentCallback)</code> | Called when the operation concludes |
 
 <a name="POSConnector.sendPOSConnectorObjectPathToPOS"></a>
 
 ### POSConnector.sendPOSConnectorObjectPathToPOS(objectPath, [callback])
-Send an object path for the POSConnector to the native POS application.You'd do this if you're utilizing modules or similar and you don't want to dependon having the POSConnector object with that specific variable name in the global scope.
+Send an object path for the POSConnector to the native POS application.
+You'd do this if you're utilizing modules or similar and you don't want to depend
+on having the POSConnector object with that specific variable name in the global scope.
 
 **Kind**: static method of <code>[POSConnector](#POSConnector)</code>  
 
@@ -254,7 +257,7 @@ Passed to the getLoginInformation function
 | Param | Type | Description |
 | --- | --- | --- |
 | [result] | <code>[LoginInformation](#POSConnector.LoginInformation)</code> | The requested login information if successful |
-| [error] | <code>string</code> | The error that occured if unsuccessful |
+| [error] | <code>string</code> | The error that occurred if unsuccessful |
 
 <a name="POSConnector..openURLCallback"></a>
 
@@ -265,7 +268,7 @@ Passed to the openURL function
 
 | Param | Type | Description |
 | --- | --- | --- |
-| [error] | <code>string</code> | The error that occured if unsuccessful |
+| [error] | <code>string</code> | The error that occurred if unsuccessful |
 
 <a name="POSConnector..printDocumentCallback"></a>
 
@@ -277,7 +280,7 @@ Passed to the printDocumentAtURL and printDocumentData functions
 | Param | Type | Description |
 | --- | --- | --- |
 | result | <code>boolean</code> | Whether or not the printing job was completed |
-| [error] | <code>string</code> | The error that occured if printing wasn't just cancelled by the user |
+| [error] | <code>string</code> | The error that occurred if printing wasn't just cancelled by the user |
 
 <a name="POSConnector..sendPOSConnectorObjectPathToPOSCallback"></a>
 
@@ -288,5 +291,5 @@ Passed to the sendPOSConnectorObjectPathToPOS function
 
 | Param | Type | Description |
 | --- | --- | --- |
-| [error] | <code>string</code> | The error that occured if unsuccessful |
+| [error] | <code>string</code> | The error that occurred if unsuccessful |
 

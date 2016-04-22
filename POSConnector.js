@@ -15,26 +15,26 @@
  * Passed to the getLoginInformation function
  * @callback POSConnector~getLoginInformationCallback
  * @param {POSConnector.LoginInformation} [result] - The requested login information if successful
- * @param {string} [error] - The error that occured if unsuccessful
+ * @param {string} [error] - The error that occurred if unsuccessful
  */
 
 /**
  * Passed to the openURL function
  * @callback POSConnector~openURLCallback
- * @param {string} [error] - The error that occured if unsuccessful
+ * @param {string} [error] - The error that occurred if unsuccessful
  */
 
 /**
  * Passed to the printDocumentAtURL and printDocumentData functions
  * @callback POSConnector~printDocumentCallback
  * @param {boolean} result - Whether or not the printing job was completed
- * @param {string} [error] - The error that occured if printing wasn't just cancelled by the user
+ * @param {string} [error] - The error that occurred if printing wasn't just cancelled by the user
  */
 
 /**
  * Passed to the sendPOSConnectorObjectPathToPOS function
  * @callback POSConnector~sendPOSConnectorObjectPathToPOSCallback
- * @param {string} [error] - The error that occured if unsuccessful
+ * @param {string} [error] - The error that occurred if unsuccessful
  */
 
 /**
@@ -46,6 +46,7 @@ var POSConnector = (function () {
     "use strict";
 
     var connector = {};
+    var connectorObjectPath = "POSConnector";
     var callbackIdIndex;
     var callbacksKeyedByIds = {};
     var listenerObjects = [];
@@ -85,15 +86,6 @@ var POSConnector = (function () {
     };
 
     /**
-     * Enum of possible errors
-     * @private
-     * @enum {string} POSConnector~Error
-     */
-    var Error = {
-        NotConnected: "No connection is established from the native POS application"
-    };
-
-    /**
      * A listener object with limited event types and callbacks
      * @private
      * @class POSConnector~Listener
@@ -111,7 +103,7 @@ var POSConnector = (function () {
      * A message that can be passed back and forth between the POS and Javascript
      * @private
      * @class POSConnector~Message
-     * @param {POSConnector~MessageName} name - Name of the message, identifying its type
+     * @param {MessageName} name - Name of the message, identifying its type
      * @param {function | number} [callbackOrCallbackId] - The callback function or callback id
      * @param {Object} [body] - Message body
      */
@@ -133,11 +125,67 @@ var POSConnector = (function () {
     }
 
     /**
+     * Safely call callback function
+     * @private
+     * @function safelyCallCallback
+     * @param {function} [callback] - The callback to (maybe) call
+     * @param {Array} [callbackArguments] - The arguments for the callback
+     */
+    function safelyCallCallback(callback, callbackArguments) {
+        if (typeof callback === "function") {
+            callback.apply(undefined, callbackArguments);
+        }
+    }
+
+    /**
+     * Validate object path to POSConnector
+     * @private
+     * @function validatePOSConnectorObjectPath
+     * @param {string} objectPath - Object path
+     * @return {string | undefined} - Undefined if the provided object path is valid or a string with the error that occurred while validating
+     */
+    function validatePOSConnectorObjectPath(objectPath) {
+        var objectPathComponents = objectPath.split(".");
+        var nextComponent = window;
+        var invalidComponentInPath = objectPathComponents.some(function (element) {
+            if (!nextComponent.hasOwnProperty(element) || typeof nextComponent[element] !== "object") {
+                return true;
+            }
+            nextComponent = nextComponent[element];
+        });
+        if (invalidComponentInPath) {
+            return "Invalid component(s) in object path: " + objectPath;
+        }
+        if (typeof nextComponent.receiveMessage !== "function") {
+            return "Invalid POSConnector object at the end of object path: " + objectPath;
+        }
+        return;
+    }
+
+    /**
+     * Validate native connectivity and object path
+     * @private
+     * @function validateConnectivityAndPOSConnectorObjectPath
+     * @param {string} objectPath - Object path
+     * @return {string | undefined} - Undefined if all okay or a string with the error that occurred while validating
+     */
+    function validateConnectivityAndPOSConnectorObjectPath(objectPath) {
+        if (!connector.isConnected()) {
+            return "No connection is established from the native POS application";
+        }
+        var validationError = validatePOSConnectorObjectPath(objectPath);
+        if (typeof validationError === "string") {
+            return validationError;
+        }
+        return;
+    }
+
+    /**
      * Retrieves a callback by its id, deleting it from the callback array
      * @private
      * @function POSConnector~callbackByDeletingCallbackWithId
      * @param {number} callbackId - Callback Id
-     * @return {POSConnector~getLoginInformationCallback | POSConnector~payBasketCallback} The callback
+     * @return {POSConnector~getLoginInformationCallback | POSConnector~payBasketCallback | undefined} The callback
      */
     function callbackByDeletingCallbackWithId(callbackId) {
         if (typeof callbackId !== "number") {
@@ -152,7 +200,7 @@ var POSConnector = (function () {
      * Send a message to the POS application
      * @private
      * @function POSConnector~sendMessage
-     * @param {POSConnector~Message} message - The message to send
+     * @param {Message} message - The message to send
      */
     function sendMessage(message) {
         window.webkit.messageHandlers.POS.postMessage(message);
@@ -162,38 +210,32 @@ var POSConnector = (function () {
      * Common message reception handler for callbacks with {boolean} success and {string} [error] parameters
      * @private
      * @function POSConnector~handleCallbackMessageWithParametersSuccessAndOptionalError
-     * @param {POSConnector~Message} message - The message in question
+     * @param {Message} message - The message in question
      */
     function handleCallbackMessageWithParametersResultAndError(message) {
         var callback = callbackByDeletingCallbackWithId(message.callbackId);
-        if (typeof callback !== "function") {
-            return;
-        }
         var result = message.body.result;
         var error = message.body.error;
-        callback(result, error);
+        safelyCallCallback(callback, [result, error]);
     }
 
     /**
      * Common message reception handler for callbacks with {string} [error] parameter
      * @private
      * @function POSConnector~handleCallbackMessageWithParameterOptionalError
-     * @param {POSConnector~Message} message - The message in question
+     * @param {Message} message - The message in question
      */
     function handleCallbackMessageWithParameterError(message) {
         var callback = callbackByDeletingCallbackWithId(message.callbackId);
-        if (typeof callback !== "function") {
-            return;
-        }
         var error = message.body.error;
-        callback(error);
+        safelyCallCallback(callback, [error]);
     }
 
     /**
      * Handle reception of a message named BarcodeScanned
      * @private
      * @function POSConnector~handleBarcodeScannedMessage
-     * @param {POSConnector~Message} message - The message in question
+     * @param {Message} message - The message in question
      */
     function handleBarcodeScannedMessage(message) {
         var barcode = message.body;
@@ -387,8 +429,9 @@ var POSConnector = (function () {
      * @param {POSConnector~payBasketCallback} callback - Called when the operation concludes
      */
     connector.payBasket = function (basket, callback) {
-        if (!connector.isConnected()) {
-            callback(false, Error.NotConnected);
+        var validationError = validateConnectivityAndPOSConnectorObjectPath(connectorObjectPath);
+        if (typeof validationError === "string") {
+            safelyCallCallback(callback, [false, validationError]);
             return;
         }
         var messageBody = {};
@@ -403,8 +446,9 @@ var POSConnector = (function () {
      * @param {POSConnector~getLoginInformationCallback} callback - Called when the operation concludes
      */
     connector.getLoginInformation = function (callback) {
-        if (!connector.isConnected()) {
-            callback(null, Error.NotConnected);
+        var validationError = validateConnectivityAndPOSConnectorObjectPath(connectorObjectPath);
+        if (typeof validationError === "string") {
+            safelyCallCallback(callback, [null, validationError]);
             return;
         }
         var message = new Message(MessageName.GetLoginInformation, callback);
@@ -418,6 +462,11 @@ var POSConnector = (function () {
      * @param {POSConnector~openURLCallback} callback - Called when the native application opened or rejected opening the URL
      */
     connector.openURL = function (url, callback) {
+        var validationError = validateConnectivityAndPOSConnectorObjectPath(connectorObjectPath);
+        if (typeof validationError === "string") {
+            safelyCallCallback(callback, [validationError]);
+            return;
+        }
         var messageBody = {};
         messageBody[MessageBodyKey.URL] = url;
         var message = new Message(MessageName.OpenURL, callback, messageBody);
@@ -431,6 +480,11 @@ var POSConnector = (function () {
      * @param {POSConnector~printDocumentCallback} callback - Called when the operation concludes
      */
     connector.printDocumentAtURL = function (url, callback) {
+        var validationError = validateConnectivityAndPOSConnectorObjectPath(connectorObjectPath);
+        if (typeof validationError === "string") {
+            safelyCallCallback(callback, [false, validationError]);
+            return;
+        }
         var messageBody = {};
         messageBody[MessageBodyKey.URL] = url;
         var message = new Message(MessageName.PrintDocumentAtURL, callback, messageBody);
@@ -440,31 +494,40 @@ var POSConnector = (function () {
     /**
      * Requests printing of a document with a data object
      * @function POSConnector.printDocumentWithData
-     * @param {Blob|String} data - Data object
-     * @param {POSConnector~printDocumentCallback} callback - Called when the operation concludes
+     * @param {Blob|string} data - The document data either contained in a Blob object or a base64 string
+     * @param {POSConnector~printDocumentCallback} [callback] - Called when the operation concludes
      */
     connector.printDocumentWithData = function (data, callback) {
-        if (typeof FileReader !== "object" || typeof Blob !== "object") {
-            callback(false, "The required Blob and/or FileReader functionality isn't available in this Javascript environment.");
+        var validationError = validateConnectivityAndPOSConnectorObjectPath(connectorObjectPath);
+        if (typeof validationError === "string") {
+            safelyCallCallback(callback, [validationError]);
             return;
         }
-        var sendData = function (dataAsURL) {
-            var base64String = dataAsURL.substr(dataAsURL.indexOf(',') + 1);
+        var sendData = function (base64String) {
             var messageBody = {};
             messageBody[MessageBodyKey.Data] = base64String;
             var message = new Message(MessageName.PrintDocumentWithData, callback, messageBody);
             sendMessage(message);
         };
-
-        if (data.type) {
-            var fileReader = new FileReader();
-            fileReader.onload = function () {
-                sendData(fileReader.result);
-            };
-            fileReader.readAsDataURL(data);
-        } else {
-            sendData(data);
+        var dataType = typeof data;
+        if (dataType !== "string" && dataType !== "object") {
+            safelyCallCallback(callback, [false, "Data argument of invalid type: " + dataType]);
         }
+        if (dataType === "string") {
+            sendData(data);
+            return;
+        }
+        if (typeof FileReader !== "object" || typeof Blob !== "object") {
+            safelyCallCallback(callback, [false, "The required FileReader and/or Blob functionality isn't available in this Javascript environment"]);
+            return;
+        }
+        var fileReader = new FileReader();
+        fileReader.onload = function () {
+            var dataAsURL = fileReader.result;
+            var base64String = dataAsURL.substr(dataAsURL.indexOf(',') + 1);
+            sendData(base64String);
+        };
+        fileReader.readAsDataURL(data);
     };
 
     /**
@@ -476,29 +539,21 @@ var POSConnector = (function () {
      * @param {POSConnector~sendPOSConnectorObjectPathToPOSCallback} [callback] - Called when the operation concludes.
      */
     connector.sendPOSConnectorObjectPathToPOS = function (objectPath, callback) {
-        var objectPathComponents = objectPath.split(".");
-        var nextComponent = window;
-        var invalidComponentInPath = objectPathComponents.some(function (element) {
-            if (!nextComponent.hasOwnProperty(element) || typeof nextComponent[element] !== "object") {
-                return true;
-            }
-            nextComponent = nextComponent[element];
-        });
-        if (invalidComponentInPath) {
-            if (typeof callback === "function") {
-                callback("Invalid component(s) in object path: " + objectPath);
-            }
+        var validationError = validateConnectivityAndPOSConnectorObjectPath(objectPath);
+        if (typeof validationError === "string") {
+            safelyCallCallback(callback, [validationError]);
             return;
         }
-        if (typeof nextComponent.isConnected !== "function") {
-            if (callback === "function") {
-                callback("Invalid POSConnector object at the end of object path: " + objectPath);
+        var outerCallback = function (error) {
+            if (typeof error === "string") {
+                safelyCallCallback(callback, [error]);
             }
-            return;
-        }
+            connectorObjectPath = objectPath;
+            safelyCallCallback(callback);
+        };
         var messageBody = {};
         messageBody[MessageBodyKey.ObjectPath] = objectPath;
-        var message = new Message(MessageName.SendPOSConnectorObjectPathToPOS, callback, messageBody);
+        var message = new Message(MessageName.SendPOSConnectorObjectPathToPOS, outerCallback, messageBody);
         sendMessage(message);
     };
 
