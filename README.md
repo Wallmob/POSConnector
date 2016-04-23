@@ -18,6 +18,8 @@ Allows for communication with the native POS application.
             * [new Basket(id, lineItems, [transactions], [discounts])](#new_POSConnector.Basket_new)
         * [.LoginInformation](#POSConnector.LoginInformation)
             * [new LoginInformation(shopId, shopName, registerId, registerName, userId, userName)](#new_POSConnector.LoginInformation_new)
+        * [.TransactionType](#POSConnector.TransactionType) : <code>enum</code>
+        * [.EventType](#POSConnector.EventType) : <code>enum</code>
         * [.addEventListener(type, listener)](#POSConnector.addEventListener)
         * [.removeEventListener(listener)](#POSConnector.removeEventListener)
         * [.isConnected()](#POSConnector.isConnected) ⇒ <code>boolean</code>
@@ -68,7 +70,7 @@ Represents a payment transaction
 
 | Param | Type | Description |
 | --- | --- | --- |
-| transactionType | <code>POSConnector.TransactionType</code> | The type of payment transaction |
+| transactionType | <code>[TransactionType](#POSConnector.TransactionType)</code> | The type of payment transaction |
 | amount | <code>number</code> | Amount payed by the transaction |
 
 <a name="POSConnector.Discount"></a>
@@ -121,6 +123,39 @@ Represents a shopping basket
 | userId | <code>string</code> | User's id |
 | userName | <code>string</code> | User's name |
 
+<a name="POSConnector.TransactionType"></a>
+
+### POSConnector.TransactionType : <code>enum</code>
+Enum of possible transaction types
+
+**Kind**: static enum property of <code>[POSConnector](#POSConnector)</code>  
+**Properties**
+
+| Name | Type | Default |
+| --- | --- | --- |
+| Cash | <code>string</code> | <code>&quot;Cash&quot;</code> | 
+| DebitorAccount | <code>string</code> | <code>&quot;DebitorAccount&quot;</code> | 
+| Ecommerce | <code>string</code> | <code>&quot;Ecommerce&quot;</code> | 
+| External | <code>string</code> | <code>&quot;External&quot;</code> | 
+| ExternalCard | <code>string</code> | <code>&quot;ExternalCard&quot;</code> | 
+| ExternalGiftCard | <code>string</code> | <code>&quot;ExternalGiftCard&quot;</code> | 
+| GiftCardVoucher | <code>string</code> | <code>&quot;GiftCardVoucher&quot;</code> | 
+| Installment | <code>string</code> | <code>&quot;Installment&quot;</code> | 
+| MobilePay | <code>string</code> | <code>&quot;MobilePay&quot;</code> | 
+| Point | <code>string</code> | <code>&quot;Point&quot;</code> | 
+
+<a name="POSConnector.EventType"></a>
+
+### POSConnector.EventType : <code>enum</code>
+Enum of possible event types
+
+**Kind**: static enum property of <code>[POSConnector](#POSConnector)</code>  
+**Properties**
+
+| Name | Type | Default |
+| --- | --- | --- |
+| BarcodeScanned | <code>string</code> | <code>&quot;BarcodeScanned&quot;</code> | 
+
 <a name="POSConnector.addEventListener"></a>
 
 ### POSConnector.addEventListener(type, listener)
@@ -130,7 +165,7 @@ Add an event listener
 
 | Param | Type | Description |
 | --- | --- | --- |
-| type | <code>POSConnector.EventType</code> | The type of event to listen for |
+| type | <code>[EventType](#POSConnector.EventType)</code> | The type of event to listen for |
 | listener | <code>[barcodeScannedListener](#POSConnector..barcodeScannedListener)</code> | The listener function to add |
 
 <a name="POSConnector.removeEventListener"></a>
