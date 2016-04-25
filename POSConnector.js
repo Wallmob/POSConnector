@@ -317,7 +317,7 @@ var POSConnector = (function () {
         MobilePay: "MobilePay",
         Point: "Point"
     };
-    connector.TransactionType = TransactionType;
+    connector.TransactionType = TransactionType;// Intentionally assign it to connector after variable initialization, to work around bug in jsdoc-to-markdown
 
     /**
      * Represents a payment transaction
@@ -392,7 +392,7 @@ var POSConnector = (function () {
     var EventType = {
         BarcodeScanned: "BarcodeScanned"
     };
-    connector.EventType = EventType;
+    connector.EventType = EventType; // Intentionally assign it to connector after variable initialization, to work around bug in jsdoc-to-markdown
 
     /**
      * Add an event listener
