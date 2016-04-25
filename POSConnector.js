@@ -47,7 +47,7 @@ var POSConnector = (function () {
 
     var connector = {};
     var connectorObjectPath = "POSConnector";
-    var callbackIdIndex;
+    var callbackIdIndex = 0;
     var callbacksKeyedByIds = {};
     var listenerObjects = [];
 
@@ -109,13 +109,10 @@ var POSConnector = (function () {
      */
     function Message(name, callbackOrCallbackId, body) {
         if (typeof callbackOrCallbackId === "function") {
-            if (callbackIdIndex === undefined) {
-                callbackIdIndex = 0;
-            } else {
-                callbackIdIndex += 1;
-            }
-            callbacksKeyedByIds[callbackIdIndex] = callbackOrCallbackId;
-            return new Message(name, callbackIdIndex, body);
+            var callbackIdIndexForMessage = callbackIdIndex;
+            callbacksKeyedByIds[callbackIdIndexForMessage] = callbackOrCallbackId;
+            callbackIdIndex += 1;
+            return new Message(name, callbackIdIndexForMessage, body);
         }
         var message = {};
         message.name = name;
