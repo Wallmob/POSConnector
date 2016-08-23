@@ -283,8 +283,9 @@ var POSConnector = (function () {
      * @param {string} [productId] - Id of the product represented on the line
      * @param {string} [imei] - IMEI of the product represented on the line
      * @param {Discount[]} [discounts] - Discounts on the line item
+     * @param {boolean} [isExternalProduct] - The product is external or not
      */
-    connector.LineItem = function (name, quantity, unitPrice, vatPercentage, salesTaxPercentage, productId, imei, discounts) {
+    connector.LineItem = function (name, quantity, unitPrice, vatPercentage, salesTaxPercentage, productId, imei, discounts, isExternalProduct) {
         var lineItem = {};
         lineItem.name = name;
         lineItem.quantity = quantity;
@@ -294,6 +295,7 @@ var POSConnector = (function () {
         lineItem.productId = productId;
         lineItem.imei = imei;
         lineItem.discounts = discounts;
+        lineItem.isExternalProduct = Boolean(isExternalProduct);
         return lineItem;
     };
 

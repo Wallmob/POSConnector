@@ -9,7 +9,7 @@ Allows for communication with the native POS application.
 * [POSConnector](#POSConnector)
     * _static_
         * [.LineItem](#POSConnector.LineItem)
-            * [new LineItem(name, quantity, unitPrice, vatPercentage, salesTaxPercentage, [productId], [imei], [discounts])](#new_POSConnector.LineItem_new)
+            * [new LineItem(name, quantity, unitPrice, vatPercentage, salesTaxPercentage, [productId], [imei], [discounts], isExternalProduct)](#new_POSConnector.LineItem_new)
         * [.Transaction](#POSConnector.Transaction)
             * [new Transaction(transactionType, amount)](#new_POSConnector.Transaction_new)
         * [.Discount](#POSConnector.Discount)
@@ -57,6 +57,7 @@ Represents a line item
 | [productId] | <code>string</code> | Id of the product represented on the line |
 | [imei] | <code>string</code> | IMEI of the product represented on the line |
 | [discounts] | <code>Array.&lt;Discount&gt;</code> | Discounts on the line item |
+| [isExternalProduct] | <code>boolean</code> | The product is external or not |
 
 <a name="POSConnector.Transaction"></a>
 

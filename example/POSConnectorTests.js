@@ -16,6 +16,7 @@ var POSConnectorTests = (function () {
         var lineItem1 = new tests.POSConnector.LineItem("Apple Lightning Cable", 2, 99.95, 0.25, 0);
         var lineItem2Discount = new tests.POSConnector.Discount("VIP Discount", null, 0.1);
         var lineItem2 = new tests.POSConnector.LineItem("Apple iPad Pro", 1, 4995, 0.25, 0, null, null, [lineItem2Discount]);
+        var lineItem3 = new tests.POSConnector.LineItem("Apple Watch 2", 1, 2595, 0.25, 0, null, null, null, true);
         var discount = new tests.POSConnector.Discount("Member Campaign Discount", 100);
         var transaction = new tests.POSConnector.Transaction(tests.POSConnector.TransactionType.Installment, 4000);
         var dummyId = Math.random().toString();
