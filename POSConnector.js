@@ -59,6 +59,8 @@ var POSConnector = (function () {
     var MessageName = {
         GetLoginInformation: "GetLoginInformation",
         GetLoginInformationCallback: "GetLoginInformationCallback",
+        AddBasket: "AddBasket",
+        AddBasketCallback: "AddBasketCallback",
         PayBasket: "PayBasket",
         PayBasketCallback: "PayBasketCallback",
         BarcodeScanned: "BarcodeScanned",
@@ -257,6 +259,9 @@ var POSConnector = (function () {
         case MessageName.GetLoginInformationCallback:
             handleCallbackMessageWithParametersResultAndError(message);
             break;
+        case MessageName.AddBasketCallback:
+            handleCallbackMessageWithParametersResultAndError(message);
+            break;
         case MessageName.PayBasketCallback:
             handleCallbackMessageWithParametersResultAndError(message);
             break;
@@ -425,6 +430,24 @@ var POSConnector = (function () {
         return typeof window.webkit === "object" && typeof window.webkit.messageHandlers === "object" && typeof window.webkit.messageHandlers.POS === "object";
     };
 
+
+    /**
+    * Add a basket to the POS
+    * @function POSConnector.addBasket
+    * @param {POSConnector.Basket} basket - Basket to pass on to the POS
+    * @param {POSConnector~addBasketCallback} callback - Called when the operation concludes
+    */
+    connector.addBasket = function (basket, callback) {
+        var validationError = validateConnectivityAndPOSConnectorObjectPath(connectorObjectPath);
+        if (typeof validationError === "string") {
+            safelyCallCallback(callback, [false, validationError]);
+            return;
+        }
+        var messageBody = {};
+        messageBody[MessageBodyKey.Basket] = basket;
+        var message = new Message(MessageName.AddBasket, callback, messageBody);
+        sendMessage(message);
+    };
     /**
      * Pass a basket to the POS for payment processing
      * @function POSConnector.payBasket

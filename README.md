@@ -9,7 +9,7 @@ Allows for communication with the native POS application.
 * [POSConnector](#POSConnector)
     * _static_
         * [.LineItem](#POSConnector.LineItem)
-            * [new LineItem(name, quantity, unitPrice, vatPercentage, salesTaxPercentage, [productId], [imei], [discounts], isExternalProduct)](#new_POSConnector.LineItem_new)
+            * [new LineItem(name, quantity, unitPrice, vatPercentage, salesTaxPercentage, [productId], [imei], [discounts], [isExternalProduct])](#new_POSConnector.LineItem_new)
         * [.Transaction](#POSConnector.Transaction)
             * [new Transaction(transactionType, amount)](#new_POSConnector.Transaction_new)
         * [.Discount](#POSConnector.Discount)
@@ -23,6 +23,7 @@ Allows for communication with the native POS application.
         * [.addEventListener(type, listener)](#POSConnector.addEventListener)
         * [.removeEventListener(listener)](#POSConnector.removeEventListener)
         * [.isConnected()](#POSConnector.isConnected) ⇒ <code>boolean</code>
+        * [.addBasket(basket, callback)](#POSConnector.addBasket)
         * [.payBasket(basket, callback)](#POSConnector.payBasket)
         * [.getLoginInformation(callback)](#POSConnector.getLoginInformation)
         * [.openURL(url, callback)](#POSConnector.openURL)
@@ -31,6 +32,7 @@ Allows for communication with the native POS application.
         * [.sendPOSConnectorObjectPathToPOS(objectPath, [callback])](#POSConnector.sendPOSConnectorObjectPathToPOS)
     * _inner_
         * [~barcodeScannedListener](#POSConnector..barcodeScannedListener) : <code>function</code>
+        * [~addBasketCallback](#POSConnector..addBasketCallback) : <code>function</code>
         * [~payBasketCallback](#POSConnector..payBasketCallback) : <code>function</code>
         * [~getLoginInformationCallback](#POSConnector..getLoginInformationCallback) : <code>function</code>
         * [~openURLCallback](#POSConnector..openURLCallback) : <code>function</code>
@@ -187,6 +189,19 @@ Check for connection toward the POS
 
 **Kind**: static method of <code>[POSConnector](#POSConnector)</code>  
 **Returns**: <code>boolean</code> - The connection status  
+
+<a name="POSConnector.addBasket"></a>
+
+### POSConnector.addBasket(basket, callback)
+Add a basket to the POS
+
+**Kind**: static method of <code>[POSConnector](#POSConnector)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| basket | <code>[Basket](#POSConnector.Basket)</code> | Basket to add on to the POS |
+| callback | <code>[addBasketCallback](#POSConnector..addBasketCallback)</code> | Called when the operation concludes |
+
 <a name="POSConnector.payBasket"></a>
 
 ### POSConnector.payBasket(basket, callback)
@@ -270,6 +285,18 @@ Passed to POSConnector.addEventListener for EventType.BarcodeScanned
 | Param | Type | Description |
 | --- | --- | --- |
 | barcode | <code>string</code> | The barcode that was scanned |
+
+<a name="POSConnector..addBasketCallback"></a>
+
+### POSConnector~addBasketCallback : <code>function</code>
+Passed to the addBasket function
+
+**Kind**: inner typedef of <code>[POSConnector](#POSConnector)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| result | <code>boolean</code> | Whether or not it was completed |
+| [error] | <code>string</code> | Optional string describing what went wrong |
 
 <a name="POSConnector..payBasketCallback"></a>
 
