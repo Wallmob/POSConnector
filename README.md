@@ -32,6 +32,7 @@ Allows for communication with the native POS application.
         * [.sendPOSConnectorObjectPathToPOS(objectPath, [callback])](#POSConnector.sendPOSConnectorObjectPathToPOS)
     * _inner_
         * [~barcodeScannedListener](#POSConnector..barcodeScannedListener) : <code>function</code>
+        * [~addBasketCallback](#POSConnector..addBasketCallback) : <code>function</code>
         * [~payBasketCallback](#POSConnector..payBasketCallback) : <code>function</code>
         * [~getLoginInformationCallback](#POSConnector..getLoginInformationCallback) : <code>function</code>
         * [~openURLCallback](#POSConnector..openURLCallback) : <code>function</code>
@@ -197,8 +198,8 @@ Add a basket to the POS
 
 | Param | Type | Description |
 | --- | --- | --- |
-| basket | <code>[Basket](#POSConnector.Basket)</code> | Basket to pass on to the POS |
-| callback | <code>POSConnector~addBasketCallback</code> | Called when the operation concludes |
+| basket | <code>[Basket](#POSConnector.Basket)</code> | Basket to add on to the POS |
+| callback | <code>[addBasketCallback](#POSConnector..addBasketCallback)</code> | Called when the operation concludes |
 
 <a name="POSConnector.payBasket"></a>
 
@@ -283,6 +284,18 @@ Passed to POSConnector.addEventListener for EventType.BarcodeScanned
 | Param | Type | Description |
 | --- | --- | --- |
 | barcode | <code>string</code> | The barcode that was scanned |
+
+<a name="POSConnector..addBasketCallback"></a>
+
+### POSConnector~addBasketCallback : <code>function</code>
+Passed to the addBasket function
+
+**Kind**: inner typedef of <code>[POSConnector](#POSConnector)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| result | <code>boolean</code> | Whether or not the basket was added successful |
+| [error] | <code>string</code> | Optional string describing what went wrong |
 
 <a name="POSConnector..payBasketCallback"></a>
 
