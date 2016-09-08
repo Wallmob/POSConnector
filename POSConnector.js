@@ -5,6 +5,13 @@
  */
 
 /**
+ * Passed to the addBasket function
+ * @callback POSConnector~addBasketCallback
+ * @param {boolean} result - Whether or not the basket was added successful
+ * @param {string} [error] - Optional string describing what went wrong
+ */
+
+/**
  * Passed to the payBasket function
  * @callback POSConnector~payBasketCallback
  * @param {boolean} result - Whether or not the payment was completed
@@ -434,7 +441,7 @@ var POSConnector = (function () {
     /**
     * Add a basket to the POS
     * @function POSConnector.addBasket
-    * @param {POSConnector.Basket} basket - Basket to pass on to the POS
+    * @param {POSConnector.Basket} basket - Basket to add on to the POS
     * @param {POSConnector~addBasketCallback} callback - Called when the operation concludes
     */
     connector.addBasket = function (basket, callback) {
