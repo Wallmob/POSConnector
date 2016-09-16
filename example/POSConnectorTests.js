@@ -12,22 +12,6 @@ var POSConnectorTests = (function () {
         console.log("")
     }
 
-    tests.TestAddBasket = function () {
-        var lineItem1 = new tests.POSConnector.LineItem("Apple Lightning Cable", 2, 99.95, 0.25, 0);
-        var lineItem2Discount = new tests.POSConnector.Discount("VIP Discount", null, 0.1);
-        var lineItem2 = new tests.POSConnector.LineItem("Apple iPad Pro", 1, 4995, 0.25, 0, null, null, [lineItem2Discount], true);
-        var discount = new tests.POSConnector.Discount("Member Campaign Discount", 100);
-        var transaction = new tests.POSConnector.Transaction(tests.POSConnector.TransactionType.Installment, 4000);
-        var dummyId = Math.random().toString();
-        var basket = new tests.POSConnector.Basket(dummyId, [lineItem1, lineItem2], [transaction], [discount]);
-        tests.POSConnector.addBasket(basket, function (result, error) {
-            console.log("AddBasketCallback: " + result);
-            console.log("ID: " + dummyId);
-            if (error) {
-                console.log("Error: " + error);
-            }
-        });
-    };
 
     tests.TestPayBasket = function () {
         var lineItem1 = new tests.POSConnector.LineItem("Apple Lightning Cable", 2, 99.95, 0.25, 0);
@@ -38,6 +22,23 @@ var POSConnectorTests = (function () {
         var dummyId = Math.random().toString();
         var basket = new tests.POSConnector.Basket(dummyId, [lineItem1, lineItem2], [transaction], [discount]);
         tests.POSConnector.payBasket(basket, function (result, error) {
+            console.log("PayBasketCallback: " + result);
+            console.log("ID: " + dummyId);
+            if (error) {
+                console.log("Error: " + error);
+            }
+        });
+    };
+    
+    tests.TestAddToBasketEcommerce = function () {
+        var lineItem1 = new tests.POSConnector.LineItem("Apple Lightning Cable", 2, 99.95, 0.25, 0);
+        var lineItem2Discount = new tests.POSConnector.Discount("VIP Discount", null, 0.1);
+        var lineItem2 = new tests.POSConnector.LineItem("Apple iPad Pro", 1, 4995, 0.25, 0, null, null, [lineItem2Discount],true);
+        var discount = new tests.POSConnector.Discount("Member Campaign Discount", 100);
+        var transaction = new tests.POSConnector.Transaction(tests.POSConnector.TransactionType.Installment, 4000);
+        var dummyId = Math.random().toString();
+        var basket = new tests.POSConnector.Basket(dummyId, [lineItem1, lineItem2], [transaction], [discount]);
+        tests.POSConnector.addBasket(basket, function (result, error) {
             console.log("PayBasketCallback: " + result);
             console.log("ID: " + dummyId);
             if (error) {
