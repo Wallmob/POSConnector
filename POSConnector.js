@@ -518,10 +518,6 @@ var POSConnector = (function () {
             sendData(data);
             return;
         }
-        if (typeof FileReader !== "object" || typeof Blob !== "object") {
-            safelyCallCallback(callback, [false, "The required FileReader and/or Blob functionality isn't available in this Javascript environment"]);
-            return;
-        }
         var fileReader = new FileReader();
         fileReader.onload = function () {
             var dataAsURL = fileReader.result;
