@@ -47,14 +47,14 @@ var POSConnector = (function () {
 
     var connector = {};
     var connectorObjectPath = "POSConnector";
-    var callbackIdIndex;
+    var callbackIdIndex = 0;
     var callbacksKeyedByIds = {};
     var listenerObjects = [];
 
     /**
      * Enum of possible message names
      * @private
-     * @enum {string} POSConnector~MessageName
+     * @enum {string} MessageName
      */
     var MessageName = {
         GetLoginInformation: "GetLoginInformation",
@@ -74,7 +74,7 @@ var POSConnector = (function () {
     /**
      * Enum of possible message body keys
      * @private
-     * @enum {string} POSConnector~MessageBodyKey
+     * @enum {string} MessageBodyKey
      */
     var MessageBodyKey = {
         Result: "result",
@@ -109,13 +109,10 @@ var POSConnector = (function () {
      */
     function Message(name, callbackOrCallbackId, body) {
         if (typeof callbackOrCallbackId === "function") {
-            if (callbackIdIndex === undefined) {
-                callbackIdIndex = 0;
-            } else {
-                callbackIdIndex += 1;
-            }
-            callbacksKeyedByIds[callbackIdIndex] = callbackOrCallbackId;
-            return new Message(name, callbackIdIndex, body);
+            var callbackIdIndexForMessage = callbackIdIndex;
+            callbacksKeyedByIds[callbackIdIndexForMessage] = callbackOrCallbackId;
+            callbackIdIndex += 1;
+            return new Message(name, callbackIdIndexForMessage, body);
         }
         var message = {};
         message.name = name;
@@ -250,7 +247,7 @@ var POSConnector = (function () {
      * Receive a message from the POS application. Never call this function.
      * @private
      * @function POSConnector.receiveMessage
-     * @param {POSConnector~Message} message - The received message
+     * @param {Message} message - The received message
      */
     connector.receiveMessage = function (message) {
         switch (message.name) {
@@ -302,9 +299,10 @@ var POSConnector = (function () {
 
     /**
      * Enum of possible transaction types
-     * @enum {string} POSConnector.TransactionType
+     * @enum {string} TransactionType
+     * @memberOf POSConnector
      */
-    connector.TransactionType = {
+    var TransactionType = {
         Cash: "Cash",
         DebitorAccount: "DebitorAccount",
         Ecommerce: "Ecommerce",
@@ -316,6 +314,7 @@ var POSConnector = (function () {
         MobilePay: "MobilePay",
         Point: "Point"
     };
+    connector.TransactionType = TransactionType;// Intentionally assign it to connector after variable initialization, to work around bug in jsdoc-to-markdown
 
     /**
      * Represents a payment transaction
@@ -385,10 +384,12 @@ var POSConnector = (function () {
     /**
      * Enum of possible event types
      * @enum {string} POSConnector.EventType
+     * @memberOf POSConnector
      */
-    connector.EventType = {
+    var EventType = {
         BarcodeScanned: "BarcodeScanned"
     };
+    connector.EventType = EventType; // Intentionally assign it to connector after variable initialization, to work around bug in jsdoc-to-markdown
 
     /**
      * Add an event listener
