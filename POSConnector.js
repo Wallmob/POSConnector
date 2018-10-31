@@ -4,9 +4,9 @@
  * @param {string} barcode - The barcode that was scanned
  */
 /**
- * Passed to POSConnector.addEventListener for EventType.BarcodeScanned
- * @callback POSConnector~barcodeScannedListener
- * @param {string} barcode - The barcode that was scanned
+ * Passed to POSConnector.addEventListener for EventType.
+ * @callback POSConnector~deeplinkActivatedListener
+ * @param {string} link - The link
  */
 
 /**

@@ -30,7 +30,7 @@ POSConnectorAllows for communication with the native POS application.
         * [.sendPOSConnectorObjectPathToPOS(objectPath, [callback])](#POSConnector.sendPOSConnectorObjectPathToPOS)
     * _inner_
         * [~barcodeScannedListener](#POSConnector..barcodeScannedListener) : <code>function</code>
-        * [~barcodeScannedListener](#POSConnector..barcodeScannedListener) : <code>function</code>
+        * [~deeplinkActivatedListener](#POSConnector..deeplinkActivatedListener) : <code>function</code>
         * [~payBasketCallback](#POSConnector..payBasketCallback) : <code>function</code>
         * [~getLoginInformationCallback](#POSConnector..getLoginInformationCallback) : <code>function</code>
         * [~openURLCallback](#POSConnector..openURLCallback) : <code>function</code>
@@ -269,16 +269,16 @@ Passed to POSConnector.addEventListener for EventType.BarcodeScanned
 | --- | --- | --- |
 | barcode | <code>string</code> | The barcode that was scanned |
 
-<a name="POSConnector..barcodeScannedListener"></a>
+<a name="POSConnector..deeplinkActivatedListener"></a>
 
-### POSConnector~barcodeScannedListener : <code>function</code>
-Passed to POSConnector.addEventListener for EventType.BarcodeScanned
+### POSConnector~deeplinkActivatedListener : <code>function</code>
+Passed to POSConnector.addEventListener for EventType.
 
 **Kind**: inner typedef of <code>[POSConnector](#POSConnector)</code>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| barcode | <code>string</code> | The barcode that was scanned |
+| link | <code>string</code> | The link |
 
 <a name="POSConnector..payBasketCallback"></a>
 
