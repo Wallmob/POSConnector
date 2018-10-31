@@ -3,6 +3,11 @@
  * @callback POSConnector~barcodeScannedListener
  * @param {string} barcode - The barcode that was scanned
  */
+/**
+ * Passed to POSConnector.addEventListener for EventType.BarcodeScanned
+ * @callback POSConnector~barcodeScannedListener
+ * @param {string} barcode - The barcode that was scanned
+ */
 
 /**
  * Passed to the payBasket function
@@ -62,6 +67,7 @@ var POSConnector = (function () {
         PayBasket: "PayBasket",
         PayBasketCallback: "PayBasketCallback",
         BarcodeScanned: "BarcodeScanned",
+        DeeplinkActivated: "DeeplinkActivated",
         OpenURL: "OpenURL",
         OpenURLCallback: "OpenURLCallback",
         PrintDocumentAtURL: "PrintDocumentAtURL",
@@ -90,7 +96,7 @@ var POSConnector = (function () {
      * @private
      * @class POSConnector~Listener
      * @param {POSConnector~EventType} type - The event that the listener observes
-     * @param {POSConnector~barcodeScannedListener} listenerCallback - The callback function
+     * @param listenerCallback - The callback function
      */
     function Listener(type, listenerCallback) {
         var listener = {};
@@ -156,7 +162,6 @@ var POSConnector = (function () {
         if (typeof nextComponent.receiveMessage !== "function") {
             return "Invalid POSConnector object at the end of object path: " + objectPath;
         }
-        return;
     }
 
     /**
@@ -170,11 +175,12 @@ var POSConnector = (function () {
         if (!connector.isConnected()) {
             return "No connection is established from the native POS application";
         }
+
         var validationError = validatePOSConnectorObjectPath(objectPath);
+
         if (typeof validationError === "string") {
             return validationError;
         }
-        return;
     }
 
     /**
@@ -189,7 +195,9 @@ var POSConnector = (function () {
             return;
         }
         var callback = callbacksKeyedByIds[callbackId];
+
         delete callbacksKeyedByIds[callbackId];
+
         return callback;
     }
 
@@ -213,6 +221,7 @@ var POSConnector = (function () {
         var callback = callbackByDeletingCallbackWithId(message.callbackId);
         var result = message.body.result;
         var error = message.body.error;
+
         safelyCallCallback(callback, [result, error]);
     }
 
@@ -225,6 +234,7 @@ var POSConnector = (function () {
     function handleCallbackMessageWithParameterError(message) {
         var callback = callbackByDeletingCallbackWithId(message.callbackId);
         var error = message.body.error;
+
         safelyCallCallback(callback, [error]);
     }
 
@@ -236,12 +246,29 @@ var POSConnector = (function () {
      */
     function handleBarcodeScannedMessage(message) {
         var barcode = message.body;
+
         listenerObjects.forEach(function (listenerObject) {
             if (listenerObject.type === connector.EventType.BarcodeScanned) {
                 listenerObject.listenerCallback(barcode);
             }
         });
     }
+
+    /**
+     * Handle reception of a message named DeeplinkActivated
+     * @private
+     * @function POSConnector~handleBarcodeScannedMessage
+     * @param {Message} message - The message in question
+     */
+     function handleDeeplinkActivatedMessage(message) {
+          var data = message.body;
+
+          listenerObjects.forEach(function (listenerObject) {
+               if (listenerObject.type === connector.EventType.DeeplinkActivated) {
+                    listenerObject.listenerCallback(data);
+               }
+          });
+     }
 
     /**
      * Receive a message from the POS application. Never call this function.
@@ -254,6 +281,9 @@ var POSConnector = (function () {
         case MessageName.BarcodeScanned:
             handleBarcodeScannedMessage(message);
             break;
+        case MessageName.DeeplinkActivated:
+            handleDeeplinkActivatedMessage(message);
+        break;
         case MessageName.GetLoginInformationCallback:
             handleCallbackMessageWithParametersResultAndError(message);
             break;
@@ -387,15 +417,17 @@ var POSConnector = (function () {
      * @memberOf POSConnector
      */
     var EventType = {
-        BarcodeScanned: "BarcodeScanned"
+        BarcodeScanned: "BarcodeScanned",
+        DeeplinkActivated: "DeeplinkActivated"
     };
+
     connector.EventType = EventType; // Intentionally assign it to connector after variable initialization, to work around bug in jsdoc-to-markdown
 
     /**
      * Add an event listener
      * @function POSConnector.addEventListener
      * @param {POSConnector.EventType} type - The type of event to listen for
-     * @param {POSConnector~barcodeScannedListener} listener - The listener function to add
+     * @param listener - The listener function to add
      */
     connector.addEventListener = function (type, listener) {
         listenerObjects.push(new Listener(type, listener));
@@ -549,6 +581,7 @@ var POSConnector = (function () {
             safelyCallCallback(callback);
         };
         var messageBody = {};
+
         messageBody[MessageBodyKey.ObjectPath] = objectPath;
         var message = new Message(MessageName.SendPOSConnectorObjectPathToPOS, outerCallback, messageBody);
         sendMessage(message);
