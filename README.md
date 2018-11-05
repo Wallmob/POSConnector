@@ -1,8 +1,7 @@
 <a name="POSConnector"></a>
 
 ## POSConnector
-POSConnector
-Allows for communication with the native POS application.
+POSConnectorAllows for communication with the native POS application.
 
 **Kind**: global class  
 
@@ -31,6 +30,7 @@ Allows for communication with the native POS application.
         * [.sendPOSConnectorObjectPathToPOS(objectPath, [callback])](#POSConnector.sendPOSConnectorObjectPathToPOS)
     * _inner_
         * [~barcodeScannedListener](#POSConnector..barcodeScannedListener) : <code>function</code>
+        * [~deeplinkActivatedListener](#POSConnector..deeplinkActivatedListener) : <code>function</code>
         * [~payBasketCallback](#POSConnector..payBasketCallback) : <code>function</code>
         * [~getLoginInformationCallback](#POSConnector..getLoginInformationCallback) : <code>function</code>
         * [~openURLCallback](#POSConnector..openURLCallback) : <code>function</code>
@@ -155,6 +155,7 @@ Enum of possible event types
 | Name | Type | Default |
 | --- | --- | --- |
 | BarcodeScanned | <code>string</code> | <code>&quot;BarcodeScanned&quot;</code> | 
+| DeeplinkActivated | <code>string</code> | <code>&quot;DeeplinkActivated&quot;</code> | 
 
 <a name="POSConnector.addEventListener"></a>
 
@@ -166,7 +167,7 @@ Add an event listener
 | Param | Type | Description |
 | --- | --- | --- |
 | type | <code>[EventType](#POSConnector.EventType)</code> | The type of event to listen for |
-| listener | <code>[barcodeScannedListener](#POSConnector..barcodeScannedListener)</code> | The listener function to add |
+| listener |  | The listener function to add |
 
 <a name="POSConnector.removeEventListener"></a>
 
@@ -248,9 +249,7 @@ Requests printing of a document with a data object
 <a name="POSConnector.sendPOSConnectorObjectPathToPOS"></a>
 
 ### POSConnector.sendPOSConnectorObjectPathToPOS(objectPath, [callback])
-Send an object path for the POSConnector to the native POS application.
-You'd do this if you're utilizing modules or similar and you don't want to depend
-on having the POSConnector object with that specific variable name in the global scope.
+Send an object path for the POSConnector to the native POS application.You'd do this if you're utilizing modules or similar and you don't want to dependon having the POSConnector object with that specific variable name in the global scope.
 
 **Kind**: static method of <code>[POSConnector](#POSConnector)</code>  
 
@@ -269,6 +268,17 @@ Passed to POSConnector.addEventListener for EventType.BarcodeScanned
 | Param | Type | Description |
 | --- | --- | --- |
 | barcode | <code>string</code> | The barcode that was scanned |
+
+<a name="POSConnector..deeplinkActivatedListener"></a>
+
+### POSConnector~deeplinkActivatedListener : <code>function</code>
+Passed to POSConnector.addEventListener for EventType.
+
+**Kind**: inner typedef of <code>[POSConnector](#POSConnector)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| link | <code>string</code> | The link |
 
 <a name="POSConnector..payBasketCallback"></a>
 
