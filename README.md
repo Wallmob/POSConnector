@@ -24,6 +24,7 @@ Allows for communication with the native POS application.
         * [.removeEventListener(listener)](#POSConnector.removeEventListener)
         * [.isConnected()](#POSConnector.isConnected) ⇒ <code>boolean</code>
         * [.payBasket(basket, callback)](#POSConnector.payBasket)
+        * [.addBasket(basket, callback)](#POSConnector.addBasket)
         * [.getLoginInformation(callback)](#POSConnector.getLoginInformation)
         * [.openURL(url, callback)](#POSConnector.openURL)
         * [.printDocumentAtURL(url, callback)](#POSConnector.printDocumentAtURL)
@@ -56,7 +57,7 @@ Represents a line item
 | salesTaxPercentage | <code>number</code> | The sales tax to apply to the unit price (eg. 0.05) |
 | [productId] | <code>string</code> | Id of the product represented on the line |
 | [imei] | <code>string</code> | IMEI of the product represented on the line |
-| [discounts] | <code>Array.&lt;Discount&gt;</code> | Discounts on the line item |
+| [discounts] | <code>[ &#x27;Array&#x27; ].&lt;Discount&gt;</code> | Discounts on the line item |
 
 <a name="POSConnector.Transaction"></a>
 
@@ -102,9 +103,9 @@ Represents a shopping basket
 | Param | Type | Description |
 | --- | --- | --- |
 | id | <code>string</code> | Id of the basket |
-| lineItems | <code>Array.&lt;LineItem&gt;</code> | Line items contained in the basket |
-| [transactions] | <code>Array.&lt;Transaction&gt;</code> | Transactions on the basket |
-| [discounts] | <code>Array.&lt;Discount&gt;</code> | Discounts on the basket |
+| lineItems | <code>[ &#x27;Array&#x27; ].&lt;LineItem&gt;</code> | Line items contained in the basket |
+| [transactions] | <code>[ &#x27;Array&#x27; ].&lt;Transaction&gt;</code> | Transactions on the basket |
+| [discounts] | <code>[ &#x27;Array&#x27; ].&lt;Discount&gt;</code> | Discounts on the basket |
 
 <a name="POSConnector.LoginInformation"></a>
 
@@ -198,6 +199,18 @@ Pass a basket to the POS for payment processing
 | basket | <code>[Basket](#POSConnector.Basket)</code> | Basket to pass on to the POS |
 | callback | <code>[payBasketCallback](#POSConnector..payBasketCallback)</code> | Called when the operation concludes |
 
+<a name="POSConnector.addBasket"></a>
+
+### POSConnector.addBasket(basket, callback)
+Alias of payBasket function (needed for Telenor)
+
+**Kind**: static method of <code>[POSConnector](#POSConnector)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| basket | <code>[Basket](#POSConnector.Basket)</code> | Basket to pass on to the POS |
+| callback | <code>[payBasketCallback](#POSConnector..payBasketCallback)</code> | Called when the operation concludes |
+
 <a name="POSConnector.getLoginInformation"></a>
 
 ### POSConnector.getLoginInformation(callback)
@@ -273,7 +286,7 @@ Passed to POSConnector.addEventListener for EventType.BarcodeScanned
 <a name="POSConnector..payBasketCallback"></a>
 
 ### POSConnector~payBasketCallback : <code>function</code>
-Passed to the payBasket function
+Passed to the payBasket or addBasket function
 
 **Kind**: inner typedef of <code>[POSConnector](#POSConnector)</code>  
 

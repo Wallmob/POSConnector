@@ -5,7 +5,7 @@
  */
 
 /**
- * Passed to the payBasket function
+ * Passed to the payBasket or addBasket function
  * @callback POSConnector~payBasketCallback
  * @param {boolean} result - Whether or not the payment was completed
  * @param {string} [error] - Optional string describing what went wrong
@@ -61,6 +61,7 @@ var POSConnector = (function () {
         GetLoginInformationCallback: "GetLoginInformationCallback",
         PayBasket: "PayBasket",
         PayBasketCallback: "PayBasketCallback",
+        AddBasket: "AddBasket",
         BarcodeScanned: "BarcodeScanned",
         OpenURL: "OpenURL",
         OpenURLCallback: "OpenURLCallback",
@@ -439,6 +440,16 @@ var POSConnector = (function () {
         messageBody[MessageBodyKey.Basket] = basket;
         var message = new Message(MessageName.PayBasket, callback, messageBody);
         sendMessage(message);
+    };
+
+    /**
+     * Alias of payBasket function (needed for Telenor)
+     * @function POSConnector.addBasket
+     * @param {POSConnector.Basket} basket - Basket to pass on to the POS
+     * @param {POSConnector~payBasketCallback} callback - Called when the operation concludes
+     */
+    connector.addBasket = function (basket, callback) {
+        connector.payBasket(basket, callback);
     };
 
     /**

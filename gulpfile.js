@@ -5,26 +5,29 @@ var uglify = require("gulp-uglify");
 var rename = require("gulp-rename");
 var fileName = "POSConnector.js";
 
-gulp.task("docs", function () {
-	gulp.src(fileName)
-    .pipe(gulpJsdoc2md())
-    .pipe(rename("README.md"))
-    .pipe(gulp.dest('./'));
-});
+function docs() {
+	return gulp.src(fileName)
+		.pipe(gulpJsdoc2md())
+		.pipe(rename("README.md"))
+		.pipe(gulp.dest('./'));
+}
 
-gulp.task("compile-minify", function() {
-	gulp.src(fileName)
-	.pipe(uglify())
-	.pipe(rename({extname: ".min.js"}))
-	.pipe(gulp.dest("./"));
-});
+function compileMinify() {
+	return gulp.src(fileName)
+		.pipe(uglify())
+		.pipe(rename({extname: ".min.js"}))
+		.pipe(gulp.dest("./"));
+}
 
-gulp.task("default", function () {
-	gulp.start("docs");
-    gulp.start("compile-minify");
-    watch(fileName, function(files){
-    	gulp.start("docs");
-    	gulp.start("compile-minify");
+function defaultTasks() {
+	docs();
+    compileMinify();
+    return watch(fileName, function(files){
+    	docs();
+    	compileMinify();
     });
-});
+}
 
+exports.docs = docs;
+exports.compileMinify = compileMinify;
+exports.default = defaultTasks;

@@ -6,10 +6,10 @@
   "author": "Rasmus Taulborg Hummelmose",
   "license": "ISC",
   "devDependencies": {
-    "gulp": "*",
+    "gulp": "^4.0.2",
+    "gulp-jsdoc-to-markdown": "*",
     "gulp-rename": "*",
     "gulp-uglify": "*",
-    "gulp-watch": "*",
-    "gulp-jsdoc-to-markdown": "*"
+    "gulp-watch": "*"
   }
 }
