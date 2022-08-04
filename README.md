@@ -15,7 +15,7 @@ Allows for communication with the native POS application.
         * [.Discount](#POSConnector.Discount)
             * [new Discount(description, [amount], [percentage])](#new_POSConnector.Discount_new)
         * [.Basket](#POSConnector.Basket)
-            * [new Basket(id, lineItems, [transactions], [discounts])](#new_POSConnector.Basket_new)
+            * [new Basket(id, lineItems, [transactions], [discounts], customerId)](#new_POSConnector.Basket_new)
         * [.LoginInformation](#POSConnector.LoginInformation)
             * [new LoginInformation(shopId, shopName, registerId, registerName, userId, userName)](#new_POSConnector.LoginInformation_new)
         * [.TransactionType](#POSConnector.TransactionType) : <code>enum</code>
@@ -96,7 +96,7 @@ Represents a discount on either a basket or a line item
 **Kind**: static class of <code>[POSConnector](#POSConnector)</code>  
 <a name="new_POSConnector.Basket_new"></a>
 
-#### new Basket(id, lineItems, [transactions], [discounts])
+#### new Basket(id, lineItems, [transactions], [discounts], customerId)
 Represents a shopping basket
 
 
@@ -106,6 +106,7 @@ Represents a shopping basket
 | lineItems | <code>[ &#x27;Array&#x27; ].&lt;LineItem&gt;</code> | Line items contained in the basket |
 | [transactions] | <code>[ &#x27;Array&#x27; ].&lt;Transaction&gt;</code> | Transactions on the basket |
 | [discounts] | <code>[ &#x27;Array&#x27; ].&lt;Discount&gt;</code> | Discounts on the basket |
+| customerId | <code>string</code> &#124; <code>null</code> | Baskets Customers id |
 
 <a name="POSConnector.LoginInformation"></a>
 
