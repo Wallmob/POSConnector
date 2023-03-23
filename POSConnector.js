@@ -83,7 +83,9 @@ var POSConnector = (function () {
         Basket: "basket",
         URL: "url",
         Data: "data",
-        ObjectPath: "objectPath"
+        ObjectPath: "objectPath",
+        Validate: "validate",
+        CloseWebview: "closeWebview",
     };
 
     /**
@@ -431,16 +433,24 @@ var POSConnector = (function () {
      * @function POSConnector.payBasket
      * @param {POSConnector.Basket} basket - Basket to pass on to the POS
      * @param {POSConnector~payBasketCallback} callback - Called when the operation concludes
+     * @param {boolean} validate If true, POS will validate basket items against the database
+     * @param {boolean} closeWebview If true, Webview will be closed after adding item to the basket
      */
-    connector.payBasket = function (basket, callback) {
+    connector.payBasket = function (basket, callback, validate = false, closeWebview = true) {
         var validationError = validateConnectivityAndPOSConnectorObjectPath(connectorObjectPath);
+
         if (typeof validationError === "string") {
             safelyCallCallback(callback, [false, validationError]);
             return;
         }
-        var messageBody = {};
-        messageBody[MessageBodyKey.Basket] = basket;
+
+        var messageBody = {
+            [MessageBodyKey.Basket]: basket,
+            [MessageBodyKey.Validate]: validate,
+            [MessageBodyKey.CloseWebview]: closeWebview,
+        }
         var message = new Message(MessageName.PayBasket, callback, messageBody);
+
         sendMessage(message);
     };
 
@@ -449,9 +459,11 @@ var POSConnector = (function () {
      * @function POSConnector.addBasket
      * @param {POSConnector.Basket} basket - Basket to pass on to the POS
      * @param {POSConnector~payBasketCallback} callback - Called when the operation concludes
+     * @param {boolean} validate If true, POS will validate basket items against the database
+     * @param {boolean} closeWebview If true, Webview will be closed after adding item to the basket
      */
-    connector.addBasket = function (basket, callback) {
-        connector.payBasket(basket, callback);
+    connector.addBasket = function (basket, callback, validate = false, closeWebview = true) {
+        connector.payBasket(basket, callback, validate, closeWebview);
     };
 
     /**
