@@ -106,7 +106,7 @@ var POSConnector = (function () {
      * A message that can be passed back and forth between the POS and Javascript
      * @private
      * @class POSConnector~Message
-     * @param {MessageName} name - Name of the message, identifying its type
+     * @param {string} name - Name of the message, identifying its type
      * @param {function | number} [callbackOrCallbackId] - The callback function or callback id
      * @param {Object} [body] - Message body
      */
@@ -429,14 +429,39 @@ var POSConnector = (function () {
     };
 
     /**
-     * Pass a basket to the POS for payment processing
+     * Pass a basket to the POS and go to payment view
      * @function POSConnector.payBasket
      * @param {POSConnector.Basket} basket - Basket to pass on to the POS
      * @param {POSConnector~payBasketCallback} callback - Called when the operation concludes
-     * @param {boolean} validate If true, POS will validate basket items against the database
-     * @param {boolean} closeWebview If true, Webview will be closed after adding item to the basket
+     * @param {boolean} validate - If true, POS will validate basket items against the database
      */
-    connector.payBasket = function (basket, callback, validate = false, closeWebview = true) {
+    connector.payBasket = function (basket, callback, validate = false) {
+        connector.sendBasket(MessageName.PayBasket, basket, callback, validate, true);
+    };
+
+    /**
+     * Pass a basket to the POS but don't go to payment view
+     * @function POSConnector.addBasket
+     * @param {POSConnector.Basket} basket - Basket to pass on to the POS
+     * @param {POSConnector~payBasketCallback} callback - Called when the operation concludes
+     * @param {boolean} validate - If true, POS will validate basket items against the database
+     * @param {boolean} closeWebview - If true, Webview will be closed after adding item to the basket
+     */
+    connector.addBasket = function (basket, callback, validate = false, closeWebview = true) {
+        connector.sendBasket(MessageName.AddBasket, basket, callback, validate, closeWebview);
+    };
+
+    /**
+     * Pass a basket to the POS
+     * @private
+     * @function POSConnector.sendBasket
+     * @param {string} messageName
+     * @param {POSConnector.Basket} basket - Basket to pass on to the POS
+     * @param {POSConnector~payBasketCallback} callback - Called when the operation concludes
+     * @param {boolean} validate - If true, POS will validate basket items against the database
+     * @param {boolean} closeWebview - If true, Webview will be closed after adding item to the basket
+     */
+    connector.sendBasket = function (messageName, basket, callback, validate, closeWebview) {
         var validationError = validateConnectivityAndPOSConnectorObjectPath(connectorObjectPath);
 
         if (typeof validationError === "string") {
@@ -449,22 +474,10 @@ var POSConnector = (function () {
             [MessageBodyKey.Validate]: validate,
             [MessageBodyKey.CloseWebview]: closeWebview,
         }
-        var message = new Message(MessageName.PayBasket, callback, messageBody);
+        var message = new Message(messageName, callback, messageBody);
 
         sendMessage(message);
-    };
-
-    /**
-     * Alias of payBasket function (needed for Telenor)
-     * @function POSConnector.addBasket
-     * @param {POSConnector.Basket} basket - Basket to pass on to the POS
-     * @param {POSConnector~payBasketCallback} callback - Called when the operation concludes
-     * @param {boolean} validate If true, POS will validate basket items against the database
-     * @param {boolean} closeWebview If true, Webview will be closed after adding item to the basket
-     */
-    connector.addBasket = function (basket, callback, validate = false, closeWebview = true) {
-        connector.payBasket(basket, callback, validate, closeWebview);
-    };
+    }
 
     /**
      * Get current login information from the native POS

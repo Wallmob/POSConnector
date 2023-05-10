@@ -23,7 +23,7 @@ Allows for communication with the native POS application.
         * [.addEventListener(type, listener)](#POSConnector.addEventListener)
         * [.removeEventListener(listener)](#POSConnector.removeEventListener)
         * [.isConnected()](#POSConnector.isConnected) ⇒ <code>boolean</code>
-        * [.payBasket(basket, callback, validate, closeWebview)](#POSConnector.payBasket)
+        * [.payBasket(basket, callback, validate)](#POSConnector.payBasket)
         * [.addBasket(basket, callback, validate, closeWebview)](#POSConnector.addBasket)
         * [.getLoginInformation(callback)](#POSConnector.getLoginInformation)
         * [.openURL(url, callback)](#POSConnector.openURL)
@@ -190,8 +190,8 @@ Check for connection toward the POS
 **Returns**: <code>boolean</code> - The connection status  
 <a name="POSConnector.payBasket"></a>
 
-### POSConnector.payBasket(basket, callback, validate, closeWebview)
-Pass a basket to the POS for payment processing
+### POSConnector.payBasket(basket, callback, validate)
+Pass a basket to the POS and go to payment view
 
 **Kind**: static method of <code>[POSConnector](#POSConnector)</code>  
 
@@ -200,12 +200,11 @@ Pass a basket to the POS for payment processing
 | basket | <code>[Basket](#POSConnector.Basket)</code> | Basket to pass on to the POS |
 | callback | <code>[payBasketCallback](#POSConnector..payBasketCallback)</code> | Called when the operation concludes |
 | validate | <code>boolean</code> | If true, POS will validate basket items against the database |
-| closeWebview | <code>boolean</code> | If true, Webview will be closed after adding item to the basket |
 
 <a name="POSConnector.addBasket"></a>
 
 ### POSConnector.addBasket(basket, callback, validate, closeWebview)
-Alias of payBasket function (needed for Telenor)
+Pass a basket to the POS but don't go to payment view
 
 **Kind**: static method of <code>[POSConnector](#POSConnector)</code>  
 
