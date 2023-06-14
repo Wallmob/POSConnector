@@ -366,18 +366,18 @@ var POSConnector = (function () {
      * @class POSConnector.Basket
      * @param {string} id - Id of the basket
      * @param {LineItem[]} lineItems - Line items contained in the basket
-     * @param {Transaction[]} [transactions] - Transactions on the basket
-     * @param {Discount[]} [discounts] - Discounts on the basket
-     * @param {string | null} customerId - Baskets Customers id
+     * @param {Transaction[] | null} [transactions] - Transactions on the basket
+     * @param {Discount[] | null} [discounts] - Discounts on the basket
+     * @param {string | null} [customerId] - Baskets Customers id
      */
-    connector.Basket = function (id, lineItems, transactions, discounts, customerId = null) {
-        var basket = {};
-        basket.id = id;
-        basket.lineItems = lineItems;
-        basket.transactions = transactions;
-        basket.discounts = discounts;
-        basket.customerId = customerId;
-        return basket;
+    connector.Basket = function (id, lineItems, transactions = null, discounts = null, customerId = null) {
+        return {
+            id: id,
+            lineItems: lineItems,
+            transactions: transactions,
+            discounts: discounts,
+            customerId: customerId
+        };
     };
 
     /**
