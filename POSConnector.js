@@ -347,18 +347,22 @@ var POSConnector = (function () {
     };
 
     /**
-     * Represents a discount on either a basket or a line item
+     * Represents a discount on either a basket or a line item. Either amount or percentage must be set, but not both
      * @class POSConnector.Discount
      * @param {string} description - Reason for the discount to be given (shown on receipt)
-     * @param {number} [amount] - Amount that the discount applies (eg. 90.50). Do not pass if passing percentage.
-     * @param {number} [percentage] - The percentage which will be calculated based on what it's applied to (eg. 0.5). Do not pass if passing amount.
+     * @param {number | null} [amount] - Amount that the discount applies (eg. 90.50)
+     * @param {number | null} [percentage] - The percentage which will be calculated based on what it's applied to (eg. 0.5)
      */
-    connector.Discount = function (description, amount, percentage) {
-        var discount = {};
-        discount.description = description;
-        discount.amount = amount;
-        discount.percentage = percentage;
-        return discount;
+    connector.Discount = function (description, amount = null, percentage = null) {
+        if ((amount == null && percentage == null) || (amount != null && percentage != null)) {
+            throw new Error('Either amount or percentage must be set, but not both');
+        }
+
+        return {
+            description: description,
+            amount: amount,
+            percentage: percentage
+        };
     };
 
     /**
