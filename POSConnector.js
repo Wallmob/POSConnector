@@ -281,23 +281,35 @@ var POSConnector = (function () {
      * @param {string} name - Name of the line item
      * @param {number} quantity - Number of items, positive or negative, represented on the line (eg. 5)
      * @param {number} unitPrice - The price of each item on the line (eg. 9.95)
-     * @param {number} vatPercentage - The VAT included in the unit price (eg. 0.25)
-     * @param {number} salesTaxPercentage - The sales tax to apply to the unit price (eg. 0.05)
-     * @param {string} [productId] - Id of the product represented on the line
-     * @param {string} [imei] - IMEI of the product represented on the line
-     * @param {Discount[]} [discounts] - Discounts on the line item
+     * @param {number | null} [vatPercentage] - The VAT included in the unit price (eg. 0.25)
+     * @param {number | null} [salesTaxPercentage] - The sales tax to apply to the unit price (eg. 0.05)
+     * @param {string | null} [productId] - Id of the product represented on the line
+     * @param {string | null} [imei] - IMEI of the product represented on the line
+     * @param {Discount[] | null} [discounts] - Discounts on the line item
+     * @param {boolean | null} [isExternalProduct] - Is this product external?
      */
-    connector.LineItem = function (name, quantity, unitPrice, vatPercentage, salesTaxPercentage, productId, imei, discounts) {
-        var lineItem = {};
-        lineItem.name = name;
-        lineItem.quantity = quantity;
-        lineItem.unitPrice = unitPrice;
-        lineItem.vatPercentage = vatPercentage;
-        lineItem.salesTaxPercentage = salesTaxPercentage;
-        lineItem.productId = productId;
-        lineItem.imei = imei;
-        lineItem.discounts = discounts;
-        return lineItem;
+    connector.LineItem = function (
+        name,
+        quantity,
+        unitPrice,
+        vatPercentage = null,
+        salesTaxPercentage = null,
+        productId = null,
+        imei = null,
+        discounts = null,
+        isExternalProduct = null
+    ) {
+        return {
+            name: name,
+            quantity: quantity,
+            unitPrice: unitPrice,
+            vatPercentage: vatPercentage,
+            salesTaxPercentage: salesTaxPercentage,
+            productId: productId,
+            imei: imei,
+            discounts: discounts,
+            isExternalProduct: isExternalProduct
+        };
     };
 
     /**
