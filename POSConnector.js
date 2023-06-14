@@ -315,7 +315,9 @@ var POSConnector = (function () {
         GiftCardVoucher: "GiftCardVoucher",
         Installment: "Installment",
         MobilePay: "MobilePay",
-        Point: "Point"
+        Vipps: "Vipps",
+        Dintero: "Dintero",
+        Invoice: "Invoice"
     };
     connector.TransactionType = TransactionType;// Intentionally assign it to connector after variable initialization, to work around bug in jsdoc-to-markdown
 
