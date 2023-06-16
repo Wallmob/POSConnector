@@ -281,23 +281,35 @@ var POSConnector = (function () {
      * @param {string} name - Name of the line item
      * @param {number} quantity - Number of items, positive or negative, represented on the line (eg. 5)
      * @param {number} unitPrice - The price of each item on the line (eg. 9.95)
-     * @param {number} vatPercentage - The VAT included in the unit price (eg. 0.25)
-     * @param {number} salesTaxPercentage - The sales tax to apply to the unit price (eg. 0.05)
-     * @param {string} [productId] - Id of the product represented on the line
-     * @param {string} [imei] - IMEI of the product represented on the line
-     * @param {Discount[]} [discounts] - Discounts on the line item
+     * @param {number | null} [vatPercentage] - The VAT included in the unit price (eg. 0.25)
+     * @param {number | null} [salesTaxPercentage] - The sales tax to apply to the unit price (eg. 0.05)
+     * @param {string | null} [productId] - Id of the product represented on the line
+     * @param {string | null} [imei] - IMEI of the product represented on the line
+     * @param {Discount[] | null} [discounts] - Discounts on the line item
+     * @param {boolean | null} [isExternalProduct] - Is this product external?
      */
-    connector.LineItem = function (name, quantity, unitPrice, vatPercentage, salesTaxPercentage, productId, imei, discounts) {
-        var lineItem = {};
-        lineItem.name = name;
-        lineItem.quantity = quantity;
-        lineItem.unitPrice = unitPrice;
-        lineItem.vatPercentage = vatPercentage;
-        lineItem.salesTaxPercentage = salesTaxPercentage;
-        lineItem.productId = productId;
-        lineItem.imei = imei;
-        lineItem.discounts = discounts;
-        return lineItem;
+    connector.LineItem = function (
+        name,
+        quantity,
+        unitPrice,
+        vatPercentage = null,
+        salesTaxPercentage = null,
+        productId = null,
+        imei = null,
+        discounts = null,
+        isExternalProduct = null
+    ) {
+        return {
+            name: name,
+            quantity: quantity,
+            unitPrice: unitPrice,
+            vatPercentage: vatPercentage,
+            salesTaxPercentage: salesTaxPercentage,
+            productId: productId,
+            imei: imei,
+            discounts: discounts,
+            isExternalProduct: isExternalProduct
+        };
     };
 
     /**
@@ -315,7 +327,9 @@ var POSConnector = (function () {
         GiftCardVoucher: "GiftCardVoucher",
         Installment: "Installment",
         MobilePay: "MobilePay",
-        Point: "Point"
+        Vipps: "Vipps",
+        Dintero: "Dintero",
+        Invoice: "Invoice"
     };
     connector.TransactionType = TransactionType;// Intentionally assign it to connector after variable initialization, to work around bug in jsdoc-to-markdown
 
@@ -333,18 +347,22 @@ var POSConnector = (function () {
     };
 
     /**
-     * Represents a discount on either a basket or a line item
+     * Represents a discount on either a basket or a line item. Either amount or percentage must be set, but not both
      * @class POSConnector.Discount
      * @param {string} description - Reason for the discount to be given (shown on receipt)
-     * @param {number} [amount] - Amount that the discount applies (eg. 90.50). Do not pass if passing percentage.
-     * @param {number} [percentage] - The percentage which will be calculated based on what it's applied to (eg. 0.5). Do not pass if passing amount.
+     * @param {number | null} [amount] - Amount that the discount applies (eg. 90.50)
+     * @param {number | null} [percentage] - The percentage which will be calculated based on what it's applied to (eg. 0.5)
      */
-    connector.Discount = function (description, amount, percentage) {
-        var discount = {};
-        discount.description = description;
-        discount.amount = amount;
-        discount.percentage = percentage;
-        return discount;
+    connector.Discount = function (description, amount = null, percentage = null) {
+        if ((amount == null && percentage == null) || (amount != null && percentage != null)) {
+            throw new Error('Either amount or percentage must be set, but not both');
+        }
+
+        return {
+            description: description,
+            amount: amount,
+            percentage: percentage
+        };
     };
 
     /**
@@ -352,18 +370,18 @@ var POSConnector = (function () {
      * @class POSConnector.Basket
      * @param {string} id - Id of the basket
      * @param {LineItem[]} lineItems - Line items contained in the basket
-     * @param {Transaction[]} [transactions] - Transactions on the basket
-     * @param {Discount[]} [discounts] - Discounts on the basket
-     * @param {string | null} customerId - Baskets Customers id
+     * @param {Transaction[] | null} [transactions] - Transactions on the basket
+     * @param {Discount[] | null} [discounts] - Discounts on the basket
+     * @param {string | null} [customerId] - Baskets Customers id
      */
-    connector.Basket = function (id, lineItems, transactions, discounts, customerId = null) {
-        var basket = {};
-        basket.id = id;
-        basket.lineItems = lineItems;
-        basket.transactions = transactions;
-        basket.discounts = discounts;
-        basket.customerId = customerId;
-        return basket;
+    connector.Basket = function (id, lineItems, transactions = null, discounts = null, customerId = null) {
+        return {
+            id: id,
+            lineItems: lineItems,
+            transactions: transactions,
+            discounts: discounts,
+            customerId: customerId
+        };
     };
 
     /**

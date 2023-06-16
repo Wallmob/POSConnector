@@ -9,13 +9,13 @@ Allows for communication with the native POS application.
 * [POSConnector](#POSConnector)
     * _static_
         * [.LineItem](#POSConnector.LineItem)
-            * [new LineItem(name, quantity, unitPrice, vatPercentage, salesTaxPercentage, [productId], [imei], [discounts])](#new_POSConnector.LineItem_new)
+            * [new LineItem(name, quantity, unitPrice, [vatPercentage], [salesTaxPercentage], [productId], [imei], [discounts], [isExternalProduct])](#new_POSConnector.LineItem_new)
         * [.Transaction](#POSConnector.Transaction)
             * [new Transaction(transactionType, amount)](#new_POSConnector.Transaction_new)
         * [.Discount](#POSConnector.Discount)
             * [new Discount(description, [amount], [percentage])](#new_POSConnector.Discount_new)
         * [.Basket](#POSConnector.Basket)
-            * [new Basket(id, lineItems, [transactions], [discounts], customerId)](#new_POSConnector.Basket_new)
+            * [new Basket(id, lineItems, [transactions], [discounts], [customerId])](#new_POSConnector.Basket_new)
         * [.LoginInformation](#POSConnector.LoginInformation)
             * [new LoginInformation(shopId, shopName, registerId, registerName, userId, userName)](#new_POSConnector.LoginInformation_new)
         * [.TransactionType](#POSConnector.TransactionType) : <code>enum</code>
@@ -44,7 +44,7 @@ Allows for communication with the native POS application.
 **Kind**: static class of <code>[POSConnector](#POSConnector)</code>  
 <a name="new_POSConnector.LineItem_new"></a>
 
-#### new LineItem(name, quantity, unitPrice, vatPercentage, salesTaxPercentage, [productId], [imei], [discounts])
+#### new LineItem(name, quantity, unitPrice, [vatPercentage], [salesTaxPercentage], [productId], [imei], [discounts], [isExternalProduct])
 Represents a line item
 
 
@@ -53,11 +53,12 @@ Represents a line item
 | name | <code>string</code> | Name of the line item |
 | quantity | <code>number</code> | Number of items, positive or negative, represented on the line (eg. 5) |
 | unitPrice | <code>number</code> | The price of each item on the line (eg. 9.95) |
-| vatPercentage | <code>number</code> | The VAT included in the unit price (eg. 0.25) |
-| salesTaxPercentage | <code>number</code> | The sales tax to apply to the unit price (eg. 0.05) |
-| [productId] | <code>string</code> | Id of the product represented on the line |
-| [imei] | <code>string</code> | IMEI of the product represented on the line |
-| [discounts] | <code>[ &#x27;Array&#x27; ].&lt;Discount&gt;</code> | Discounts on the line item |
+| [vatPercentage] | <code>number</code> &#124; <code>null</code> | The VAT included in the unit price (eg. 0.25) |
+| [salesTaxPercentage] | <code>number</code> &#124; <code>null</code> | The sales tax to apply to the unit price (eg. 0.05) |
+| [productId] | <code>string</code> &#124; <code>null</code> | Id of the product represented on the line |
+| [imei] | <code>string</code> &#124; <code>null</code> | IMEI of the product represented on the line |
+| [discounts] | <code>Array.&lt;Discount&gt;</code> &#124; <code>null</code> | Discounts on the line item |
+| [isExternalProduct] | <code>boolean</code> &#124; <code>null</code> | Is this product external? |
 
 <a name="POSConnector.Transaction"></a>
 
@@ -81,14 +82,14 @@ Represents a payment transaction
 <a name="new_POSConnector.Discount_new"></a>
 
 #### new Discount(description, [amount], [percentage])
-Represents a discount on either a basket or a line item
+Represents a discount on either a basket or a line item. Either amount or percentage must be set, but not both
 
 
 | Param | Type | Description |
 | --- | --- | --- |
 | description | <code>string</code> | Reason for the discount to be given (shown on receipt) |
-| [amount] | <code>number</code> | Amount that the discount applies (eg. 90.50). Do not pass if passing percentage. |
-| [percentage] | <code>number</code> | The percentage which will be calculated based on what it's applied to (eg. 0.5). Do not pass if passing amount. |
+| [amount] | <code>number</code> &#124; <code>null</code> | Amount that the discount applies (eg. 90.50) |
+| [percentage] | <code>number</code> &#124; <code>null</code> | The percentage which will be calculated based on what it's applied to (eg. 0.5) |
 
 <a name="POSConnector.Basket"></a>
 
@@ -96,7 +97,7 @@ Represents a discount on either a basket or a line item
 **Kind**: static class of <code>[POSConnector](#POSConnector)</code>  
 <a name="new_POSConnector.Basket_new"></a>
 
-#### new Basket(id, lineItems, [transactions], [discounts], customerId)
+#### new Basket(id, lineItems, [transactions], [discounts], [customerId])
 Represents a shopping basket
 
 
@@ -104,9 +105,9 @@ Represents a shopping basket
 | --- | --- | --- |
 | id | <code>string</code> | Id of the basket |
 | lineItems | <code>[ &#x27;Array&#x27; ].&lt;LineItem&gt;</code> | Line items contained in the basket |
-| [transactions] | <code>[ &#x27;Array&#x27; ].&lt;Transaction&gt;</code> | Transactions on the basket |
-| [discounts] | <code>[ &#x27;Array&#x27; ].&lt;Discount&gt;</code> | Discounts on the basket |
-| customerId | <code>string</code> &#124; <code>null</code> | Baskets Customers id |
+| [transactions] | <code>Array.&lt;Transaction&gt;</code> &#124; <code>null</code> | Transactions on the basket |
+| [discounts] | <code>Array.&lt;Discount&gt;</code> &#124; <code>null</code> | Discounts on the basket |
+| [customerId] | <code>string</code> &#124; <code>null</code> | Baskets Customers id |
 
 <a name="POSConnector.LoginInformation"></a>
 
@@ -144,7 +145,9 @@ Enum of possible transaction types
 | GiftCardVoucher | <code>string</code> | <code>&quot;GiftCardVoucher&quot;</code> | 
 | Installment | <code>string</code> | <code>&quot;Installment&quot;</code> | 
 | MobilePay | <code>string</code> | <code>&quot;MobilePay&quot;</code> | 
-| Point | <code>string</code> | <code>&quot;Point&quot;</code> | 
+| Vipps | <code>string</code> | <code>&quot;Vipps&quot;</code> | 
+| Dintero | <code>string</code> | <code>&quot;Dintero&quot;</code> | 
+| Invoice | <code>string</code> | <code>&quot;Invoice&quot;</code> | 
 
 <a name="POSConnector.EventType"></a>
 
