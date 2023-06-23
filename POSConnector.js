@@ -254,24 +254,24 @@ var POSConnector = (function () {
      */
     connector.receiveMessage = function (message) {
         switch (message.name) {
-        case MessageName.BarcodeScanned:
-            handleBarcodeScannedMessage(message);
-            break;
-        case MessageName.GetLoginInformationCallback:
-            handleCallbackMessageWithParametersResultAndError(message);
-            break;
-        case MessageName.PayBasketCallback:
-            handleCallbackMessageWithParametersResultAndError(message);
-            break;
-        case MessageName.OpenURLCallback:
-            handleCallbackMessageWithParameterError(message);
-            break;
-        case MessageName.PrintDocumentCallback:
-            handleCallbackMessageWithParametersResultAndError(message);
-            break;
-        case MessageName.SendPOSConnectorObjectPathToPOSCallback:
-            handleCallbackMessageWithParameterError(message);
-            break;
+            case MessageName.BarcodeScanned:
+                handleBarcodeScannedMessage(message);
+                break;
+            case MessageName.GetLoginInformationCallback:
+                handleCallbackMessageWithParametersResultAndError(message);
+                break;
+            case MessageName.PayBasketCallback:
+                handleCallbackMessageWithParametersResultAndError(message);
+                break;
+            case MessageName.OpenURLCallback:
+                handleCallbackMessageWithParameterError(message);
+                break;
+            case MessageName.PrintDocumentCallback:
+                handleCallbackMessageWithParametersResultAndError(message);
+                break;
+            case MessageName.SendPOSConnectorObjectPathToPOSCallback:
+                handleCallbackMessageWithParameterError(message);
+                break;
         }
     };
 
@@ -475,10 +475,10 @@ var POSConnector = (function () {
     };
 
     /**
-    * Check for connection toward the POS
-    * @function POSConnector.isConnected
-    * @return {boolean} The connection status
-    */
+     * Check for connection toward the POS
+     * @function POSConnector.isConnected
+     * @return {boolean} The connection status
+     */
     connector.isConnected = function () {
         return typeof window.webkit === "object" && typeof window.webkit.messageHandlers === "object" && typeof window.webkit.messageHandlers.POS === "object";
     };
