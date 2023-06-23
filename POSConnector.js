@@ -303,8 +303,8 @@ var POSConnector = (function () {
             name: name,
             quantity: quantity,
             unitPrice: unitPrice,
-            vatPercentage: vatPercentage,
-            salesTaxPercentage: salesTaxPercentage,
+            vatPercentage: vatPercentage === null ? 0 : vatPercentage,
+            salesTaxPercentage: salesTaxPercentage === null ? 0 : salesTaxPercentage,
             productId: productId,
             imei: imei,
             discounts: discounts,
@@ -557,7 +557,7 @@ var POSConnector = (function () {
     connector.printDocumentWithData = function (data, callback) {
         var validationError = validateConnectivityAndPOSConnectorObjectPath(connectorObjectPath);
         if (typeof validationError === "string") {
-            safelyCallCallback(callback, [validationError]);
+            safelyCallCallback(callback, [false, validationError]);
             return;
         }
         var sendData = function (base64String) {
