@@ -276,6 +276,24 @@ var POSConnector = (function () {
     };
 
     /**
+     * @private
+     * @param {any} value
+     * @param {boolean} isNumber If true, convert value to number type
+     * @return {any}
+     */
+    connector.parseValue = function (value, isNumber = false) {
+        if ((typeof value === 'string' && value.trim() === '') || value == null) {
+            return null;
+        }
+
+        if (isNumber) {
+            return Number(value);
+        }
+
+        return value;
+    }
+
+    /**
      * Represents a line item
      * @class POSConnector.LineItem
      * @param {string} name - Name of the line item
@@ -299,16 +317,20 @@ var POSConnector = (function () {
         discounts = null,
         isExternalProduct = null
     ) {
+        if (Array.isArray(discounts) && discounts.length === 0) {
+            discounts = null;
+        }
+
         return {
-            name: name,
-            quantity: quantity,
-            unitPrice: unitPrice,
-            vatPercentage: vatPercentage === null ? 0 : vatPercentage,
-            salesTaxPercentage: salesTaxPercentage === null ? 0 : salesTaxPercentage,
-            productId: productId,
-            imei: imei,
+            name: connector.parseValue(name),
+            quantity: connector.parseValue(quantity, true),
+            unitPrice: connector.parseValue(unitPrice, true),
+            vatPercentage: connector.parseValue(vatPercentage, true) || 0,
+            salesTaxPercentage: connector.parseValue(salesTaxPercentage, true) || 0,
+            productId: connector.parseValue(productId),
+            imei: connector.parseValue(imei),
             discounts: discounts,
-            isExternalProduct: isExternalProduct
+            isExternalProduct: Boolean(isExternalProduct)
         };
     };
 
@@ -340,10 +362,10 @@ var POSConnector = (function () {
      * @param {number} amount - Amount payed by the transaction
      */
     connector.Transaction = function (transactionType, amount) {
-        var transaction = {};
-        transaction.transactionType = transactionType;
-        transaction.amount = amount;
-        return transaction;
+        return {
+            transactionType: connector.parseValue(transactionType),
+            amount: connector.parseValue(amount, true)
+        };
     };
 
     /**
@@ -354,7 +376,10 @@ var POSConnector = (function () {
      * @param {number | null} [percentage] - The percentage which will be calculated based on what it's applied to (eg. 0.5)
      */
     connector.Discount = function (description, amount = null, percentage = null) {
-        if ((amount == null && percentage == null) || (amount != null && percentage != null)) {
+        amount = connector.parseValue(amount, true);
+        percentage = connector.parseValue(percentage, true);
+
+        if ((amount === null && percentage === null) || (amount !== null && percentage !== null)) {
             throw new Error('Either amount or percentage must be set, but not both');
         }
 
@@ -375,12 +400,24 @@ var POSConnector = (function () {
      * @param {string | null} [customerId] - Baskets Customers id
      */
     connector.Basket = function (id, lineItems, transactions = null, discounts = null, customerId = null) {
+        if (Array.isArray(lineItems) && lineItems.length === 0) {
+            lineItems = null;
+        }
+
+        if (Array.isArray(transactions) && transactions.length === 0) {
+            transactions = null;
+        }
+
+        if (Array.isArray(discounts) && discounts.length === 0) {
+            discounts = null;
+        }
+
         return {
-            id: id,
+            id: connector.parseValue(id),
             lineItems: lineItems,
             transactions: transactions,
             discounts: discounts,
-            customerId: customerId
+            customerId: connector.parseValue(customerId)
         };
     };
 
