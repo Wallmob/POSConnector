@@ -5,9 +5,16 @@
  */
 
 /**
- * Passed to the payBasket or addBasket function
+ * Passed to the payBasket function
  * @callback POSConnector~payBasketCallback
  * @param {boolean} result - Whether or not the payment was completed
+ * @param {string} [error] - Optional string describing what went wrong
+ */
+
+/**
+ * Passed to the addBasket function
+ * @callback POSConnector~addBasketCallback
+ * @param {boolean} result - Whether the item was successfully added to the basket
  * @param {string} [error] - Optional string describing what went wrong
  */
 
@@ -61,6 +68,7 @@ var POSConnector = (function () {
         GetLoginInformationCallback: "GetLoginInformationCallback",
         PayBasket: "PayBasket",
         PayBasketCallback: "PayBasketCallback",
+        AddBasketCallback: "AddBasketCallback",
         AddBasket: "AddBasket",
         BarcodeScanned: "BarcodeScanned",
         OpenURL: "OpenURL",
@@ -263,6 +271,9 @@ var POSConnector = (function () {
             case MessageName.PayBasketCallback:
                 handleCallbackMessageWithParametersResultAndError(message);
                 break;
+            case MessageName.AddBasketCallback:
+                handleCallbackMessageWithParametersResultAndError(message);
+                break;
             case MessageName.OpenURLCallback:
                 handleCallbackMessageWithParameterError(message);
                 break;
@@ -305,6 +316,7 @@ var POSConnector = (function () {
      * @param {string | null} [imei] - IMEI of the product represented on the line
      * @param {Discount[] | null} [discounts] - Discounts on the line item
      * @param {boolean | null} [isExternalProduct] - Is this product external?
+     * @throws {Error} Missing required fields
      */
     connector.LineItem = function (
         name,
@@ -317,14 +329,22 @@ var POSConnector = (function () {
         discounts = null,
         isExternalProduct = null
     ) {
-        if (Array.isArray(discounts) && discounts.length === 0) {
+        name = connector.parseValue(name);
+        quantity = connector.parseValue(quantity, true);
+        unitPrice = connector.parseValue(unitPrice, true);
+
+        if (!name || !quantity || !unitPrice) {
+            throw new Error('Missing required parameters for line item');
+        }
+
+        if (!Array.isArray(discounts) || discounts.length === 0) {
             discounts = null;
         }
 
         return {
-            name: connector.parseValue(name),
-            quantity: connector.parseValue(quantity, true),
-            unitPrice: connector.parseValue(unitPrice, true),
+            name: name,
+            quantity: quantity,
+            unitPrice: unitPrice,
             vatPercentage: connector.parseValue(vatPercentage, true) || 0,
             salesTaxPercentage: connector.parseValue(salesTaxPercentage, true) || 0,
             productId: connector.parseValue(productId),
@@ -362,9 +382,16 @@ var POSConnector = (function () {
      * @param {number} amount - Amount payed by the transaction
      */
     connector.Transaction = function (transactionType, amount) {
+        transactionType = connector.parseValue(transactionType);
+        amount = connector.parseValue(amount, true);
+
+        if (!transactionType || !amount) {
+            throw new Error('Missing required parameters for transaction');
+        }
+
         return {
-            transactionType: connector.parseValue(transactionType),
-            amount: connector.parseValue(amount, true)
+            transactionType: transactionType,
+            amount: amount
         };
     };
 
@@ -373,11 +400,17 @@ var POSConnector = (function () {
      * @class POSConnector.Discount
      * @param {string} description - Reason for the discount to be given (shown on receipt)
      * @param {number | null} [amount] - Amount that the discount applies (eg. 90.50)
-     * @param {number | null} [percentage] - The percentage which will be calculated based on what it's applied to (eg. 0.5)
+     * @param {number | null} [percentage] - The percentage which will be calculated based on what it's applied to (eg. 0.5 for 50% discount)
+     * @throws {Error} Missing required parameters or incorrectly set amount/percentage
      */
     connector.Discount = function (description, amount = null, percentage = null) {
+        description = connector.parseValue(description);
         amount = connector.parseValue(amount, true);
         percentage = connector.parseValue(percentage, true);
+
+        if (!description) {
+            throw new Error('Missing required parameters for discount');
+        }
 
         if ((amount === null && percentage === null) || (amount !== null && percentage !== null)) {
             throw new Error('Either amount or percentage must be set, but not both');
@@ -398,22 +431,29 @@ var POSConnector = (function () {
      * @param {Transaction[] | null} [transactions] - Transactions on the basket
      * @param {Discount[] | null} [discounts] - Discounts on the basket
      * @param {string | null} [customerId] - Baskets Customers id
+     * @throws {Error} Missing required parameters
      */
     connector.Basket = function (id, lineItems, transactions = null, discounts = null, customerId = null) {
-        if (Array.isArray(lineItems) && lineItems.length === 0) {
-            lineItems = null;
+        id = connector.parseValue(id);
+
+        if (!id) {
+            throw new Error('Missing required parameters for basket');
         }
 
-        if (Array.isArray(transactions) && transactions.length === 0) {
+        if (!Array.isArray(lineItems) || lineItems.length === 0) {
+            throw new Error('Basket must have at least 1 line item');
+        }
+
+        if (!Array.isArray(transactions) || transactions.length === 0) {
             transactions = null;
         }
 
-        if (Array.isArray(discounts) && discounts.length === 0) {
+        if (!Array.isArray(discounts) || discounts.length === 0) {
             discounts = null;
         }
 
         return {
-            id: connector.parseValue(id),
+            id: id,
             lineItems: lineItems,
             transactions: transactions,
             discounts: discounts,
@@ -488,7 +528,7 @@ var POSConnector = (function () {
      * @function POSConnector.payBasket
      * @param {POSConnector.Basket} basket - Basket to pass on to the POS
      * @param {POSConnector~payBasketCallback} callback - Called when the operation concludes
-     * @param {boolean} validate - If true, POS will validate basket items against the database
+     * @param {boolean} validate - If true, POS will validate basket items against the database. All line items must have productId set
      */
     connector.payBasket = function (basket, callback, validate = false) {
         connector.sendBasket(MessageName.PayBasket, basket, callback, validate, true);
@@ -498,9 +538,9 @@ var POSConnector = (function () {
      * Pass a basket to the POS but don't go to payment view
      * @function POSConnector.addBasket
      * @param {POSConnector.Basket} basket - Basket to pass on to the POS
-     * @param {POSConnector~payBasketCallback} callback - Called when the operation concludes
+     * @param {POSConnector~addBasketCallback} callback - Called when the operation concludes
      * @param {boolean} validate - If true, POS will validate basket items against the database
-     * @param {boolean} closeWebview - If true, Webview will be closed after adding item to the basket
+     * @param {boolean} closeWebview - If true, Webview will be closed after adding item to the basket. All line items must have productId set
      */
     connector.addBasket = function (basket, callback, validate = false, closeWebview = true) {
         connector.sendBasket(MessageName.AddBasket, basket, callback, validate, closeWebview);
@@ -512,7 +552,7 @@ var POSConnector = (function () {
      * @function POSConnector.sendBasket
      * @param {string} messageName
      * @param {POSConnector.Basket} basket - Basket to pass on to the POS
-     * @param {POSConnector~payBasketCallback} callback - Called when the operation concludes
+     * @param {POSConnector~payBasketCallback | POSConnector~addBasketCallback} callback - Called when the operation concludes
      * @param {boolean} validate - If true, POS will validate basket items against the database
      * @param {boolean} closeWebview - If true, Webview will be closed after adding item to the basket
      */
