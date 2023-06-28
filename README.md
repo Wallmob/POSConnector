@@ -47,6 +47,10 @@ Allows for communication with the native POS application.
 #### new LineItem(name, quantity, unitPrice, [vatPercentage], [salesTaxPercentage], [productId], [imei], [discounts], [isExternalProduct])
 Represents a line item
 
+**Throws**:
+
+- <code>Error</code> Missing required fields
+
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -84,12 +88,16 @@ Represents a payment transaction
 #### new Discount(description, [amount], [percentage])
 Represents a discount on either a basket or a line item. Either amount or percentage must be set, but not both
 
+**Throws**:
+
+- <code>Error</code> Missing required parameters or incorrectly set amount/percentage
+
 
 | Param | Type | Description |
 | --- | --- | --- |
 | description | <code>string</code> | Reason for the discount to be given (shown on receipt) |
 | [amount] | <code>number</code> &#124; <code>null</code> | Amount that the discount applies (eg. 90.50) |
-| [percentage] | <code>number</code> &#124; <code>null</code> | The percentage which will be calculated based on what it's applied to (eg. 0.5) |
+| [percentage] | <code>number</code> &#124; <code>null</code> | The percentage which will be calculated based on what it's applied to (eg. 0.5 for 50% discount) |
 
 <a name="POSConnector.Basket"></a>
 
@@ -99,6 +107,10 @@ Represents a discount on either a basket or a line item. Either amount or percen
 
 #### new Basket(id, lineItems, [transactions], [discounts], [customerId])
 Represents a shopping basket
+
+**Throws**:
+
+- <code>Error</code> Missing required parameters
 
 
 | Param | Type | Description |
@@ -202,7 +214,7 @@ Pass a basket to the POS and go to payment view
 | --- | --- | --- |
 | basket | <code>[Basket](#POSConnector.Basket)</code> | Basket to pass on to the POS |
 | callback | <code>[payBasketCallback](#POSConnector..payBasketCallback)</code> | Called when the operation concludes |
-| validate | <code>boolean</code> | If true, POS will validate basket items against the database |
+| validate | <code>boolean</code> | If true, POS will validate basket items against the database. All line items must have productId set |
 
 <a name="POSConnector.addBasket"></a>
 
@@ -216,7 +228,7 @@ Pass a basket to the POS but don't go to payment view
 | basket | <code>[Basket](#POSConnector.Basket)</code> | Basket to pass on to the POS |
 | callback | <code>[payBasketCallback](#POSConnector..payBasketCallback)</code> | Called when the operation concludes |
 | validate | <code>boolean</code> | If true, POS will validate basket items against the database |
-| closeWebview | <code>boolean</code> | If true, Webview will be closed after adding item to the basket |
+| closeWebview | <code>boolean</code> | If true, Webview will be closed after adding item to the basket. All line items must have productId set |
 
 <a name="POSConnector.getLoginInformation"></a>
 
