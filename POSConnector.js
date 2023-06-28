@@ -5,9 +5,16 @@
  */
 
 /**
- * Passed to the payBasket or addBasket function
+ * Passed to the payBasket function
  * @callback POSConnector~payBasketCallback
  * @param {boolean} result - Whether or not the payment was completed
+ * @param {string} [error] - Optional string describing what went wrong
+ */
+
+/**
+ * Passed to the addBasket function
+ * @callback POSConnector~addBasketCallback
+ * @param {boolean} result - Whether the item was successfully added to the basket
  * @param {string} [error] - Optional string describing what went wrong
  */
 
@@ -61,6 +68,7 @@ var POSConnector = (function () {
         GetLoginInformationCallback: "GetLoginInformationCallback",
         PayBasket: "PayBasket",
         PayBasketCallback: "PayBasketCallback",
+        AddBasketCallback: "AddBasketCallback",
         AddBasket: "AddBasket",
         BarcodeScanned: "BarcodeScanned",
         OpenURL: "OpenURL",
@@ -261,6 +269,9 @@ var POSConnector = (function () {
                 handleCallbackMessageWithParametersResultAndError(message);
                 break;
             case MessageName.PayBasketCallback:
+                handleCallbackMessageWithParametersResultAndError(message);
+                break;
+            case MessageName.AddBasketCallback:
                 handleCallbackMessageWithParametersResultAndError(message);
                 break;
             case MessageName.OpenURLCallback:
@@ -527,7 +538,7 @@ var POSConnector = (function () {
      * Pass a basket to the POS but don't go to payment view
      * @function POSConnector.addBasket
      * @param {POSConnector.Basket} basket - Basket to pass on to the POS
-     * @param {POSConnector~payBasketCallback} callback - Called when the operation concludes
+     * @param {POSConnector~addBasketCallback} callback - Called when the operation concludes
      * @param {boolean} validate - If true, POS will validate basket items against the database
      * @param {boolean} closeWebview - If true, Webview will be closed after adding item to the basket. All line items must have productId set
      */

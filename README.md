@@ -33,6 +33,7 @@ Allows for communication with the native POS application.
     * _inner_
         * [~barcodeScannedListener](#POSConnector..barcodeScannedListener) : <code>function</code>
         * [~payBasketCallback](#POSConnector..payBasketCallback) : <code>function</code>
+        * [~addBasketCallback](#POSConnector..addBasketCallback) : <code>function</code>
         * [~getLoginInformationCallback](#POSConnector..getLoginInformationCallback) : <code>function</code>
         * [~openURLCallback](#POSConnector..openURLCallback) : <code>function</code>
         * [~printDocumentCallback](#POSConnector..printDocumentCallback) : <code>function</code>
@@ -226,7 +227,7 @@ Pass a basket to the POS but don't go to payment view
 | Param | Type | Description |
 | --- | --- | --- |
 | basket | <code>[Basket](#POSConnector.Basket)</code> | Basket to pass on to the POS |
-| callback | <code>[payBasketCallback](#POSConnector..payBasketCallback)</code> | Called when the operation concludes |
+| callback | <code>[addBasketCallback](#POSConnector..addBasketCallback)</code> | Called when the operation concludes |
 | validate | <code>boolean</code> | If true, POS will validate basket items against the database |
 | closeWebview | <code>boolean</code> | If true, Webview will be closed after adding item to the basket. All line items must have productId set |
 
@@ -305,13 +306,25 @@ Passed to POSConnector.addEventListener for EventType.BarcodeScanned
 <a name="POSConnector..payBasketCallback"></a>
 
 ### POSConnector~payBasketCallback : <code>function</code>
-Passed to the payBasket or addBasket function
+Passed to the payBasket function
 
 **Kind**: inner typedef of <code>[POSConnector](#POSConnector)</code>  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | result | <code>boolean</code> | Whether or not the payment was completed |
+| [error] | <code>string</code> | Optional string describing what went wrong |
+
+<a name="POSConnector..addBasketCallback"></a>
+
+### POSConnector~addBasketCallback : <code>function</code>
+Passed to the addBasket function
+
+**Kind**: inner typedef of <code>[POSConnector](#POSConnector)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| result | <code>boolean</code> | Whether the item was successfully added to the basket |
 | [error] | <code>string</code> | Optional string describing what went wrong |
 
 <a name="POSConnector..getLoginInformationCallback"></a>
