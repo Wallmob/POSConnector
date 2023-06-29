@@ -63,7 +63,7 @@ Represents a line item
 | [productId] | <code>string</code> &#124; <code>null</code> | Id of the product represented on the line |
 | [imei] | <code>string</code> &#124; <code>null</code> | IMEI of the product represented on the line |
 | [discounts] | <code>Array.&lt;Discount&gt;</code> &#124; <code>null</code> | Discounts on the line item |
-| [isExternalProduct] | <code>boolean</code> &#124; <code>null</code> | Is this product external? |
+| [isExternalProduct] | <code>boolean</code> | External product means product is physically in a different location (e.g. a warehouse). External products will not support adding shipping on POS |
 
 <a name="POSConnector.Transaction"></a>
 
