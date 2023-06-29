@@ -308,7 +308,7 @@ var POSConnector = (function () {
      * Represents a line item
      * @class POSConnector.LineItem
      * @param {string} name - Name of the line item
-     * @param {number} quantity - Number of items, positive or negative, represented on the line (eg. 5)
+     * @param {number} quantity - Number of items, positive or negative, represented on the line (eg. 5). Should always be integer
      * @param {number} unitPrice - The price of each item on the line (eg. 9.95)
      * @param {number | null} [vatPercentage] - The VAT included in the unit price (eg. 0.25)
      * @param {number | null} [salesTaxPercentage] - The sales tax to apply to the unit price (eg. 0.05)
@@ -376,7 +376,10 @@ var POSConnector = (function () {
     connector.TransactionType = TransactionType;// Intentionally assign it to connector after variable initialization, to work around bug in jsdoc-to-markdown
 
     /**
-     * Represents a payment transaction
+     * Represents a payment transaction.
+     * Can be used to allow the customer to make full or partial payment through your own system, instead of the POS.
+     * Note, that after sending a basket to POS, it can still be canceled or fail because of other reasons. In that case
+     * you should refund this transaction to the customer yourself.
      * @class POSConnector.Transaction
      * @param {POSConnector.TransactionType} transactionType - The type of payment transaction
      * @param {number} amount - Amount payed by the transaction
@@ -528,7 +531,7 @@ var POSConnector = (function () {
      * @function POSConnector.payBasket
      * @param {POSConnector.Basket} basket - Basket to pass on to the POS
      * @param {POSConnector~payBasketCallback} callback - Called when the operation concludes
-     * @param {boolean} validate - If true, POS will validate basket items against the database. All line items must have productId set
+     * @param {boolean} validate - If true, POS will validate basket items against the database. All line items must have productId set. If any productId is not found in the database, POS will return an error through the callback. Also, provided line item properties (name, unit price, etc) will be overridden with those from the database.
      */
     connector.payBasket = function (basket, callback, validate = false) {
         connector.sendBasket(MessageName.PayBasket, basket, callback, validate, true);
@@ -539,8 +542,8 @@ var POSConnector = (function () {
      * @function POSConnector.addBasket
      * @param {POSConnector.Basket} basket - Basket to pass on to the POS
      * @param {POSConnector~addBasketCallback} callback - Called when the operation concludes
-     * @param {boolean} validate - If true, POS will validate basket items against the database
-     * @param {boolean} closeWebview - If true, Webview will be closed after adding item to the basket. All line items must have productId set
+     * @param {boolean} validate - If true, POS will validate basket items against the database. All line items must have productId set. If any productId is not found in the database, POS will return an error through the callback. Also, provided line item properties (name, unit price, etc) will be overridden with those from the database.
+     * @param {boolean} closeWebview - If true, Webview will be closed after adding item to the basket
      */
     connector.addBasket = function (basket, callback, validate = false, closeWebview = true) {
         connector.sendBasket(MessageName.AddBasket, basket, callback, validate, closeWebview);
