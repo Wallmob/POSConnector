@@ -310,8 +310,8 @@ var POSConnector = (function () {
      * @param {string} name - Name of the line item
      * @param {number} quantity - Number of items, positive or negative, represented on the line (eg. 5). Should always be integer
      * @param {number} unitPrice - The price of each item on the line (eg. 9.95)
-     * @param {number | null} [vatPercentage] - The VAT included in the unit price (eg. 0.25)
-     * @param {number | null} [salesTaxPercentage] - The sales tax to apply to the unit price (eg. 0.05)
+     * @param {number | null} [vatPercentage] - The VAT included in the unit price (eg. 0.25). If not provided, price region default VAT rate is used
+     * @param {number | null} [salesTaxPercentage] - The sales tax to apply to the unit price (eg. 0.05). If not provided, price region default sales tax rate is used
      * @param {string | null} [productId] - Id of the product represented on the line
      * @param {string | null} [imei] - IMEI of the product represented on the line
      * @param {Discount[] | null} [discounts] - Discounts on the line item
@@ -527,7 +527,9 @@ var POSConnector = (function () {
     };
 
     /**
-     * Pass a basket to the POS and go to payment view
+     * Pass a basket to the POS and immediately go to payment view.
+     * Note, that this will skip some steps in POS, like showing shipping method selection, setting delivery date,
+     * adding a customer, etc. If you need any of these steps in your order, you should instead use `addBasket` function
      * @function POSConnector.payBasket
      * @param {POSConnector.Basket} basket - Basket to pass on to the POS
      * @param {POSConnector~payBasketCallback} callback - Called when the operation concludes

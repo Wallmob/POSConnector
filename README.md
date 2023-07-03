@@ -58,8 +58,8 @@ Represents a line item
 | name | <code>string</code> | Name of the line item |
 | quantity | <code>number</code> | Number of items, positive or negative, represented on the line (eg. 5). Should always be integer |
 | unitPrice | <code>number</code> | The price of each item on the line (eg. 9.95) |
-| [vatPercentage] | <code>number</code> &#124; <code>null</code> | The VAT included in the unit price (eg. 0.25) |
-| [salesTaxPercentage] | <code>number</code> &#124; <code>null</code> | The sales tax to apply to the unit price (eg. 0.05) |
+| [vatPercentage] | <code>number</code> &#124; <code>null</code> | The VAT included in the unit price (eg. 0.25). If not provided, price region default VAT rate is used |
+| [salesTaxPercentage] | <code>number</code> &#124; <code>null</code> | The sales tax to apply to the unit price (eg. 0.05). If not provided, price region default sales tax rate is used |
 | [productId] | <code>string</code> &#124; <code>null</code> | Id of the product represented on the line |
 | [imei] | <code>string</code> &#124; <code>null</code> | IMEI of the product represented on the line |
 | [discounts] | <code>Array.&lt;Discount&gt;</code> &#124; <code>null</code> | Discounts on the line item |
@@ -210,7 +210,9 @@ Check for connection toward the POS
 <a name="POSConnector.payBasket"></a>
 
 ### POSConnector.payBasket(basket, callback, validate)
-Pass a basket to the POS and go to payment view
+Pass a basket to the POS and immediately go to payment view.
+Note, that this will skip some steps in POS, like showing shipping method selection, setting delivery date,
+adding a customer, etc. If you need any of these steps in your order, you should instead use `addBasket` function
 
 **Kind**: static method of <code>[POSConnector](#POSConnector)</code>  
 
