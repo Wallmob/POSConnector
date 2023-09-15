@@ -316,6 +316,7 @@ var POSConnector = (function () {
      * @param {string | null} [imei] - IMEI of the product represented on the line
      * @param {Discount[] | null} [discounts] - Discounts on the line item
      * @param {boolean} [isExternalProduct] - External product means product is physically in a different location (e.g. a warehouse). External products will not support adding shipping on POS
+     * @param {string | null} [userId] - User id of line item
      * @throws {Error} Missing required fields
      */
     connector.LineItem = function (
@@ -327,7 +328,8 @@ var POSConnector = (function () {
         productId = null,
         imei = null,
         discounts = null,
-        isExternalProduct = false
+        isExternalProduct = false,
+        userId = null,
     ) {
         name = connector.parseValue(name);
         quantity = connector.parseValue(quantity, true);
@@ -350,7 +352,8 @@ var POSConnector = (function () {
             productId: connector.parseValue(productId),
             imei: connector.parseValue(imei),
             discounts: discounts,
-            isExternalProduct: Boolean(isExternalProduct)
+            isExternalProduct: Boolean(isExternalProduct),
+            userId: connector.parseValue(userId)
         };
     };
 
