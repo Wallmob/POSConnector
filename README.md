@@ -164,7 +164,7 @@ Represents a contributing user for line item
 | Param | Type | Description |
 | --- | --- | --- |
 | userId | <code>string</code> | ID of the User object in POS system |
-| contributionPercentage | <code>number</code> &#124; <code>null</code> | Integer percentage (in range of 1-100) of user contribution |
+| contributionPercentage | <code>number</code> | Integer percentage (in range of 1-100) of user contribution |
 
 <a name="POSConnector.TransactionType"></a>
 
