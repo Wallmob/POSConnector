@@ -18,6 +18,8 @@ Allows for communication with the native POS application.
             * [new Basket(id, lineItems, [transactions], [discounts], [customerId])](#new_POSConnector.Basket_new)
         * [.LoginInformation](#POSConnector.LoginInformation)
             * [new LoginInformation(shopId, shopName, registerId, registerName, userId, userName)](#new_POSConnector.LoginInformation_new)
+        * [.ContributingUser](#POSConnector.ContributingUser)
+            * [new ContributingUser(userId, contributionPercentage)](#new_POSConnector.ContributingUser_new)
         * [.TransactionType](#POSConnector.TransactionType) : <code>enum</code>
         * [.EventType](#POSConnector.EventType) : <code>enum</code>
         * [.addEventListener(type, listener)](#POSConnector.addEventListener)
