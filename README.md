@@ -65,7 +65,7 @@ Represents a line item
 | [discounts]          | <code>Array.&lt;Discount&gt;</code> &#124; <code>null</code>          | Discounts on the line item                                                                                                                         |
 | [isExternalProduct]  | <code>boolean</code>                                                  | External product means product is physically in a different location (e.g. a warehouse). External products will not support adding shipping on POS |
 | [userId]             | <code>string</code>  &#124; <code>null</code>                         | User id of line item                                                                                                                               |
-| [contributingUsers]  | <code>Array.&lt;ContributingUser&gt;</code>  &#124; <code>null</code> | User id of line item                                                                                                                               |
+| [contributingUsers]  | <code>Array.&lt;ContributingUser&gt;</code>  &#124; <code>null</code> | ContributingUsers on the line item                                                                                                                 |
 | [productVariantId]   | <code>string</code>  &#124; <code>null</code>                         | Product variant id of line item                                                                                                                    |
 
 <a name="POSConnector.Transaction"></a>
@@ -144,6 +144,25 @@ Represents a shopping basket
 | registerName | <code>string</code> | Register's name |
 | userId | <code>string</code> | User's id |
 | userName | <code>string</code> | User's name |
+
+<a name="POSConnector.ContributingUser"></a>
+
+### POSConnector.ContributingUser
+**Kind**: static class of <code>[POSConnector](#POSConnector)</code>  
+<a name="new_POSConnector.ContributingUser_new"></a>
+
+#### new ContributingUser(userId, contributionPercentage)
+Represents a contributing user for line item
+
+**Throws**:
+
+- <code>Error</code> Missing required parameters or incorrectly set contributionPercentage
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userId | <code>string</code> | ID of the User object in POS system |
+| contributionPercentage | <code>number</code> &#124; <code>null</code> | Integer percentage (in range of 1-100) of user contribution |
 
 <a name="POSConnector.TransactionType"></a>
 
