@@ -317,8 +317,9 @@ var POSConnector = (function () {
      * @param {Discount[] | null} [discounts] - Discounts on the line item
      * @param {boolean} [isExternalProduct] - External product means product is physically in a different location (e.g. a warehouse). External products will not support adding shipping on POS
      * @param {string | null} [userId] - User id of line item
+     * @param {ContributingUser[] | null} [contributingUsers] - Contributing users on the line item (contribution percentage sum of all users must be exactly 100)
      * @param {string | null} [productVariantId] - Product variant id of line item
-     * @throws {Error} Missing required fields
+     * @throws {Error} Missing required fields or invalid data
      */
     connector.LineItem = function (
         name,
@@ -331,6 +332,7 @@ var POSConnector = (function () {
         discounts = null,
         isExternalProduct = false,
         userId = null,
+        contributingUsers = null,
         productVariantId = null,
     ) {
         name = connector.parseValue(name);
@@ -345,6 +347,18 @@ var POSConnector = (function () {
             discounts = null;
         }
 
+        if (Array.isArray(contributingUsers) && contributingUsers.length > 0) {
+            const total = contributingUsers.reduce((sum, currentUser) => {
+                return sum + (currentUser.contributionPercentage || 0);
+            }, 0);
+
+            if (total !== 100) {
+                throw new Error('Total contribution percentage of contributingUsers must be exactly 100');
+            }
+        } else {
+            contributingUsers = null;
+        }
+
         return {
             name: name,
             quantity: quantity,
@@ -356,6 +370,7 @@ var POSConnector = (function () {
             discounts: discounts,
             isExternalProduct: Boolean(isExternalProduct),
             userId: connector.parseValue(userId),
+            contributingUsers: contributingUsers,
             productVariantId: connector.parseValue(productVariantId)
         };
     };
@@ -488,6 +503,34 @@ var POSConnector = (function () {
         loginInformation.userId = userId;
         loginInformation.userName = userName;
         return loginInformation;
+    };
+
+    /**
+     * Represents a contributing user
+     * @class POSConnector.ContributingUser
+     * @param {string} userId - User ID
+     * @param {number} contributionPercentage - Contribution percentage (1-100). Should always be integer
+     * @throws {Error} Missing required fields or invalid contribution percentage
+     */
+    connector.ContributingUser = function (
+        userId,
+        contributionPercentage
+    ) {
+        userId = connector.parseValue(userId);
+        contributionPercentage = connector.parseValue(contributionPercentage, true);
+
+        if (!userId || !contributionPercentage) {
+            throw new Error('Missing required parameters for ContributingUser');
+        }
+
+        if (!Number.isInteger(contributionPercentage) || contributionPercentage < 1 || contributionPercentage > 100) {
+            throw new Error('Contribution percentage must be an integer between 1 and 100');
+        }
+
+        return {
+            userId: userId,
+            contributionPercentage: contributionPercentage
+        };
     };
 
     /**
