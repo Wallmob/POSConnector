@@ -29,6 +29,21 @@ var POSConnectorTests = (function () {
         });
     };
 
+    tests.TestPayBasketWithAddon = function () {
+        // The add-on product is always looked up by the POS, so use ids of products that exist in the POS
+        var insurance = new tests.POSConnector.LineItem("p-insurance-2y", 1, 899);
+        var lineItem = new tests.POSConnector.LineItem("Camera X100", 1, 12000, 0.25, 0, "p-camera", null, null, false, null, null, null, [insurance]);
+        var dummyId = Math.random().toString();
+        var basket = new tests.POSConnector.Basket(dummyId, [lineItem]);
+        tests.POSConnector.payBasket(basket, function (result, error) {
+            console.log("PayBasketCallback: " + result);
+            console.log("ID: " + dummyId);
+            if (error) {
+                console.log("Error: " + error);
+            }
+        });
+    };
+
     tests.TestGetLoginInformation = function () {
         tests.POSConnector.getLoginInformation(function (result, error) {
             console.log("GetLoginInformationCallback");
