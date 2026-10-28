@@ -104,6 +104,19 @@ test("LineItem turns an empty addons array or a value that is not an array into 
     });
 });
 
+test("LineItem rejects an addon that has addons of its own", function () {
+    var extendedInsurance = new POSConnector.LineItem("Extended insurance", 1, 199);
+    var insuranceWithAddon = new POSConnector.LineItem("Insurance 2 years", 1, 899, null, null, null, null, null, false, null, null, null, [extendedInsurance]);
+    assert.throws(function () {
+        cameraLineItem([insuranceWithAddon]);
+    }, {name: "Error", message: /Insurance 2 years/});
+});
+
+test("LineItem accepts an addon whose own addons array is empty", function () {
+    var insurance = Object.assign(insuranceLineItem(), {addons: []});
+    assert.strictEqual(cameraLineItem([insurance]).addons.length, 1);
+});
+
 test("payBasket sends the addons of a line item to the POS", function () {
     var basket = new POSConnector.Basket("basket-1", [cameraLineItem([insuranceLineItem()]), cameraLineItem()]);
 
