@@ -319,6 +319,7 @@ var POSConnector = (function () {
      * @param {string | null} [userId] - User id of line item
      * @param {ContributingUser[] | null} [contributingUsers] - Contributing users on the line item (contribution percentage sum of all users must be exactly 100)
      * @param {string | null} [productVariantId] - Product variant id of line item
+     * @param {LineItem[] | null} [addons] - Addons that belong to this line item, for example an insurance for an insurable product. An addon cannot have addons of its own. The POS multiplies the quantity of an add-on by the quantity of the line item it belongs to (for products that are not sold by the piece, e.g. by weight, only the sign follows the line item). `validate` is applied to add-ons like it is to line items. Requires POS 4.25 or later: older POS versions ignore `addons` without any error, so the add-ons would not be sold
      * @throws {Error} Missing required fields or invalid data
      */
     connector.LineItem = function (
@@ -334,6 +335,7 @@ var POSConnector = (function () {
         userId = null,
         contributingUsers = null,
         productVariantId = null,
+        addons = null
     ) {
         name = connector.parseValue(name);
         quantity = connector.parseValue(quantity, true);
@@ -359,6 +361,17 @@ var POSConnector = (function () {
             contributingUsers = null;
         }
 
+        if (!Array.isArray(addons) || addons.length === 0) {
+            addons = null;
+        } else {
+            const addonsWithAddons = addons.filter(addon => addon && Array.isArray(addon.addons) && addon.addons.length > 0);
+
+            if (addonsWithAddons.length > 0) {
+                const names = addonsWithAddons.map(addon => addon.name).join(', ');
+                throw new Error('Addon(s) ' + names + ' cannot have addons of their own');
+            }
+        }
+
         return {
             name: name,
             quantity: quantity,
@@ -371,7 +384,8 @@ var POSConnector = (function () {
             isExternalProduct: Boolean(isExternalProduct),
             userId: connector.parseValue(userId),
             contributingUsers: contributingUsers,
-            productVariantId: connector.parseValue(productVariantId)
+            productVariantId: connector.parseValue(productVariantId),
+            addons: addons
         };
     };
 

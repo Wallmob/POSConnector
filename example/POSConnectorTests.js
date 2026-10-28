@@ -29,6 +29,22 @@ var POSConnectorTests = (function () {
         });
     };
 
+    tests.TestPayBasketWithAddon = function () {
+        // The add-on is a line item like any other: without validate the POS adds it as a manual line with this name and price
+        // (with validate = true it would also be looked up, so it would need the productId of a product that exists in the POS)
+        var insurance = new tests.POSConnector.LineItem("p-insurance-2y", 1, 899);
+        var lineItem = new tests.POSConnector.LineItem("Camera X100", 1, 12000, 0.25, 0, "p-camera", null, null, false, null, null, null, [insurance]);
+        var dummyId = Math.random().toString();
+        var basket = new tests.POSConnector.Basket(dummyId, [lineItem]);
+        tests.POSConnector.payBasket(basket, function (result, error) {
+            console.log("PayBasketCallback: " + result);
+            console.log("ID: " + dummyId);
+            if (error) {
+                console.log("Error: " + error);
+            }
+        });
+    };
+
     tests.TestGetLoginInformation = function () {
         tests.POSConnector.getLoginInformation(function (result, error) {
             console.log("GetLoginInformationCallback");

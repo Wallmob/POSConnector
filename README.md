@@ -9,7 +9,7 @@ Allows for communication with the native POS application.
 * [POSConnector](#POSConnector)
     * _static_
         * [.LineItem](#POSConnector.LineItem)
-            * [new LineItem(name, quantity, unitPrice, [vatPercentage], [salesTaxPercentage], [productId], [imei], [discounts], [isExternalProduct], [userId], [contributingUsers], [productVariantId])](#new_POSConnector.LineItem_new)
+            * [new LineItem(name, quantity, unitPrice, [vatPercentage], [salesTaxPercentage], [productId], [imei], [discounts], [isExternalProduct], [userId], [contributingUsers], [productVariantId], [addons])](#new_POSConnector.LineItem_new)
         * [.Transaction](#POSConnector.Transaction)
             * [new Transaction(transactionType, amount)](#new_POSConnector.Transaction_new)
         * [.Discount](#POSConnector.Discount)
@@ -47,28 +47,29 @@ Allows for communication with the native POS application.
 **Kind**: static class of <code>[POSConnector](#POSConnector)</code>  
 <a name="new_POSConnector.LineItem_new"></a>
 
-#### new LineItem(name, quantity, unitPrice, [vatPercentage], [salesTaxPercentage], [productId], [imei], [discounts], [isExternalProduct], [userId], [contributingUsers], [productVariantId])
+#### new LineItem(name, quantity, unitPrice, [vatPercentage], [salesTaxPercentage], [productId], [imei], [discounts], [isExternalProduct], [userId], [contributingUsers], [productVariantId], [addons])
 Represents a line item
 
 **Throws**:
 
-- <code>Error</code> Missing required fields
+- <code>Error</code> Missing required fields or invalid data
 
 
-| Param                | Type                                                                  | Description                                                                                                                                        |
-|----------------------|-----------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| name                 | <code>string</code>                                                   | Name of the line item                                                                                                                              |
-| quantity             | <code>number</code>                                                   | Number of items, positive or negative, represented on the line (eg. 5). Should always be integer                                                   |
-| unitPrice            | <code>number</code>                                                   | The price of each item on the line (eg. 9.95)                                                                                                      |
-| [vatPercentage]      | <code>number</code> &#124; <code>null</code>                          | The VAT included in the unit price (eg. 0.25). If not provided, price region default VAT rate is used                                              |
-| [salesTaxPercentage] | <code>number</code> &#124; <code>null</code>                          | The sales tax to apply to the unit price (eg. 0.05). If not provided, price region default sales tax rate is used                                  |
-| [productId]          | <code>string</code> &#124; <code>null</code>                          | Id of the product represented on the line                                                                                                          |
-| [imei]               | <code>string</code> &#124; <code>null</code>                          | IMEI of the product represented on the line                                                                                                        |
-| [discounts]          | <code>Array.&lt;Discount&gt;</code> &#124; <code>null</code>          | Discounts on the line item                                                                                                                         |
-| [isExternalProduct]  | <code>boolean</code>                                                  | External product means product is physically in a different location (e.g. a warehouse). External products will not support adding shipping on POS |
-| [userId]             | <code>string</code>  &#124; <code>null</code>                         | User id of line item                                                                                                                               |
-| [contributingUsers]  | <code>Array.&lt;ContributingUser&gt;</code>  &#124; <code>null</code> | ContributingUsers on the line item                                                                                                                 |
-| [productVariantId]   | <code>string</code>  &#124; <code>null</code>                         | Product variant id of line item                                                                                                                    |
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Name of the line item |
+| quantity | <code>number</code> | Number of items, positive or negative, represented on the line (eg. 5). Should always be integer |
+| unitPrice | <code>number</code> | The price of each item on the line (eg. 9.95) |
+| [vatPercentage] | <code>number</code> &#124; <code>null</code> | The VAT included in the unit price (eg. 0.25). If not provided, price region default VAT rate is used |
+| [salesTaxPercentage] | <code>number</code> &#124; <code>null</code> | The sales tax to apply to the unit price (eg. 0.05). If not provided, price region default sales tax rate is used |
+| [productId] | <code>string</code> &#124; <code>null</code> | Id of the product represented on the line |
+| [imei] | <code>string</code> &#124; <code>null</code> | IMEI of the product represented on the line |
+| [discounts] | <code>Array.&lt;Discount&gt;</code> &#124; <code>null</code> | Discounts on the line item |
+| [isExternalProduct] | <code>boolean</code> | External product means product is physically in a different location (e.g. a warehouse). External products will not support adding shipping on POS |
+| [userId] | <code>string</code> &#124; <code>null</code> | User id of line item |
+| [contributingUsers] | <code>Array.&lt;ContributingUser&gt;</code> &#124; <code>null</code> | Contributing users on the line item (contribution percentage sum of all users must be exactly 100) |
+| [productVariantId] | <code>string</code> &#124; <code>null</code> | Product variant id of line item |
+| [addons] | <code>Array.&lt;LineItem&gt;</code> &#124; <code>null</code> | Addons that belong to this line item, for example an insurance for an insurable product. An addon cannot have addons of its own. The POS multiplies the quantity of an add-on by the quantity of the line item it belongs to (for products that are not sold by the piece, e.g. by weight, only the sign follows the line item). `validate` is applied to add-ons like it is to line items. Requires POS 4.25 or later: older POS versions ignore `addons` without any error, so the add-ons would not be sold |
 
 <a name="POSConnector.Transaction"></a>
 
@@ -154,17 +155,17 @@ Represents a shopping basket
 <a name="new_POSConnector.ContributingUser_new"></a>
 
 #### new ContributingUser(userId, contributionPercentage)
-Represents a contributing user for line item
+Represents a contributing user
 
 **Throws**:
 
-- <code>Error</code> Missing required parameters or incorrectly set contributionPercentage
+- <code>Error</code> Missing required fields or invalid contribution percentage
 
 
 | Param | Type | Description |
 | --- | --- | --- |
-| userId | <code>string</code> | ID of the User object in POS system |
-| contributionPercentage | <code>number</code> | Integer percentage (in range of 1-100) of user contribution |
+| userId | <code>string</code> | User ID |
+| contributionPercentage | <code>number</code> | Contribution percentage (1-100). Should always be integer |
 
 <a name="POSConnector.TransactionType"></a>
 
