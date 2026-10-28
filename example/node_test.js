@@ -16,11 +16,11 @@ function test(name, body) {
     }
 }
 
-function insuranceLineItem() {
+function addonLineItem() {
     return new POSConnector.LineItem("Insurance 2 years", 1, 899, 0.25, null, "p-insurance-2y", null, null, false, null, null, "v-2y");
 }
 
-function expectedInsuranceLineItem() {
+function expectedAddonLineItem() {
     return {
         name: "Insurance 2 years",
         quantity: 1,
@@ -38,7 +38,7 @@ function expectedInsuranceLineItem() {
     };
 }
 
-function cameraLineItem(addons) {
+function lineItem(addons) {
     return new POSConnector.LineItem("Camera X100", 1, 12000, 0.25, null, "p-camera", null, null, false, null, null, "v-black", addons);
 }
 
@@ -69,7 +69,7 @@ function messagesPostedToPOS(action) {
 }
 
 test("LineItem without addons is unchanged apart from addons being null", function () {
-    assert.deepEqual(cameraLineItem(), {
+    assert.deepEqual(lineItem(), {
         name: "Camera X100",
         quantity: 1,
         unitPrice: 12000,
@@ -87,12 +87,12 @@ test("LineItem without addons is unchanged apart from addons being null", functi
 });
 
 test("LineItem returns its addons, each one a complete line item", function () {
-    assert.deepEqual(cameraLineItem([insuranceLineItem()]).addons, [expectedInsuranceLineItem()]);
+    assert.deepEqual(lineItem([addonLineItem()]).addons, [expectedAddonLineItem()]);
 });
 
 test("LineItem keeps its addons in the order they were given", function () {
     var theftCover = new POSConnector.LineItem("Theft cover", 1, 499);
-    var addonNames = cameraLineItem([insuranceLineItem(), theftCover]).addons.map(function (addon) {
+    var addonNames = lineItem([addonLineItem(), theftCover]).addons.map(function (addon) {
         return addon.name;
     });
     assert.deepEqual(addonNames, ["Insurance 2 years", "Theft cover"]);
@@ -100,7 +100,7 @@ test("LineItem keeps its addons in the order they were given", function () {
 
 test("LineItem turns an empty addons array or a value that is not an array into null", function () {
     [[], undefined, null, "Insurance", 5, true, {}].forEach(function (addons) {
-        assert.strictEqual(cameraLineItem(addons).addons, null, "addons " + util.inspect(addons) + " should become null");
+        assert.strictEqual(lineItem(addons).addons, null, "addons " + util.inspect(addons) + " should become null");
     });
 });
 
@@ -108,17 +108,17 @@ test("LineItem rejects an addon that has addons of its own", function () {
     var extendedInsurance = new POSConnector.LineItem("Extended insurance", 1, 199);
     var insuranceWithAddon = new POSConnector.LineItem("Insurance 2 years", 1, 899, null, null, null, null, null, false, null, null, null, [extendedInsurance]);
     assert.throws(function () {
-        cameraLineItem([insuranceWithAddon]);
+        lineItem([insuranceWithAddon]);
     }, {name: "Error", message: /Insurance 2 years/});
 });
 
 test("LineItem accepts an addon whose own addons array is empty", function () {
-    var insurance = Object.assign(insuranceLineItem(), {addons: []});
-    assert.strictEqual(cameraLineItem([insurance]).addons.length, 1);
+    var insurance = Object.assign(addonLineItem(), {addons: []});
+    assert.strictEqual(lineItem([insurance]).addons.length, 1);
 });
 
 test("payBasket sends the addons of a line item to the POS", function () {
-    var basket = new POSConnector.Basket("basket-1", [cameraLineItem([insuranceLineItem()]), cameraLineItem()]);
+    var basket = new POSConnector.Basket("basket-1", [lineItem([addonLineItem()]), lineItem()]);
 
     var messages = messagesPostedToPOS(function () {
         POSConnector.payBasket(basket, function () {});
@@ -128,7 +128,7 @@ test("payBasket sends the addons of a line item to the POS", function () {
     assert.strictEqual(messages[0].name, "PayBasket");
     // The serialised form is what the POS decodes
     var lineItems = JSON.parse(JSON.stringify(messages[0].body.basket.lineItems));
-    assert.deepEqual(lineItems[0].addons, [expectedInsuranceLineItem()]);
+    assert.deepEqual(lineItems[0].addons, [expectedAddonLineItem()]);
     assert.strictEqual(lineItems[1].addons, null);
 });
 
